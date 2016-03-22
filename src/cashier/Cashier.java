@@ -14,7 +14,7 @@ public class Cashier {
 		
 	}
 	
-	public String getCashierID() {
+	public String getCashierId() {
 		return cashierID;
 	}
 	
