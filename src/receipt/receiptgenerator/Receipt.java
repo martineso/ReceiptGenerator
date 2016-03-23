@@ -79,7 +79,7 @@ public class Receipt implements Serializable {
 	
 	private String whitespacePaddedProductPrice(double price) {
 		
-		String productPrice = String.valueOf(price);
+		String productPrice = String.format("%.2f", price);
 		char[] whitespace = new char[PRODUCT_PRICE_LENGTH - productPrice.length()];
 		productPrice = new String(whitespace).replace('\u0000', ' ') + productPrice;
 		
@@ -153,7 +153,7 @@ public class Receipt implements Serializable {
 	public void writeToFile() {
 		
 		
-		try(Scanner sc = new Scanner(this.toString());
+		try(Scanner sc = new Scanner(generateReceiptAsString());
 				PrintWriter writer = new PrintWriter(new FileOutputStream("res/receipt-" + this.issuedOn + ".txt"))) {
 			
 			while(sc.hasNextLine()) {
@@ -187,8 +187,7 @@ public class Receipt implements Serializable {
 		return Receipt.generatedReceipts;
 	}
 	
-	@Override
-	public String toString() {
+	private String generateReceiptAsString() {
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -217,7 +216,7 @@ public class Receipt implements Serializable {
 		sb.append("Your cashier: " + this.cashier.getName() + "\n" + this.issuedOn);
 		
 		return sb.toString();
+		
 	}
-	
 	
 }

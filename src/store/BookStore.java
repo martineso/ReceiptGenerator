@@ -10,11 +10,13 @@ import receipt.product.Product;
 import receipt.product.SoldProduct;
 import receipt.product.exceptions.OutOfStockProductException;
 import receipt.receiptgenerator.Receipt;
+import store.exceptions.CashierNotFoundException;
 
 public class BookStore implements Store {
 
 	private String name, address;
 	private List<Cashier> cashiers;
+	private Cashier activeCashier;
 	private List<Book> books;
 	private List<SoldProduct> soldBooks;
 	private List<Receipt> receiptsIssued;
@@ -26,9 +28,11 @@ public class BookStore implements Store {
 		this.address = address;
 		
 		cashiers = new ArrayList<>(1);
+		this.activeCashier = new Cashier("Ivan");
+		
 		books = new ArrayList<>(1);
 		soldBooks = new ArrayList<>(1);
-		receiptsIssued = new ArrayList<>();
+		receiptsIssued = new ArrayList<>(1);
 	}
 	
 	@Override
@@ -70,9 +74,9 @@ public class BookStore implements Store {
 	}
 
 	@Override
-	public void sell(Cashier cashier, Product product, int quantity) {
+	public void sell(Product product, int quantity) throws OutOfStockProductException {
 		
-		if(books.contains((Book)product)) {
+		if(isInStock(product)) {
 		
 			try {
 				
@@ -86,13 +90,12 @@ public class BookStore implements Store {
 				
 			} catch (OutOfStockProductException ex) {
 				
-				System.out.println(ex.getMessage());
-				return;
+				throw new OutOfStockProductException("No sufficient availability!");
 			}
 			
 		} else {
 			
-			System.out.println("Book not found!");
+			throw new OutOfStockProductException("No sufficient availability!");
 		}
 		
 	}
@@ -133,11 +136,43 @@ public class BookStore implements Store {
 	@Override
 	public void generateReceipt() {
 		
-		
+		receiptsIssued.add(Receipt.generateReceipt(this, this.activeCashier, this.soldBooks));
 		
 	}
 	
-	boolean isInStock(Product product) {
+	public void selectCashier(String name) throws CashierNotFoundException {
+		
+		for(Cashier cashier : cashiers) {
+			
+			if(cashier.getName().equalsIgnoreCase(name)) {
+				
+				this.activeCashier = cashier;
+				return;
+				
+			} else {
+				
+				throw new CashierNotFoundException();
+				
+			}
+			
+		}
+		
+	}
+	
+	public void writeReceiptsToFile() {
+		
+		for(Receipt r : receiptsIssued) {
+			
+			r.writeToFile();
+			
+		}
+		
+		// Empty the receiptsIssued array
+		receiptsIssued.clear();
+		
+	}
+	
+	private boolean isInStock(Product product) {
 		
 		return books.contains((Book) product);
 		

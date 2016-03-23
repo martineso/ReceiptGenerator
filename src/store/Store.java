@@ -3,6 +3,7 @@ package store;
 import java.util.Collection;
 import cashier.Cashier;
 import receipt.product.Product;
+import receipt.product.exceptions.OutOfStockProductException;
 
 public interface Store {
 	
@@ -14,7 +15,7 @@ public interface Store {
 	Collection<Cashier> getCashierList();
 	double getRevenue();
 	
-	void sell(Cashier cashier, Product product, int quantity);
+	void sell(Product product, int quantity) throws OutOfStockProductException;
 	void generateReceipt(); 
 	void addNewStock(Product product);
 	void addCashier(Cashier cashier);
