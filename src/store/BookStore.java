@@ -1,5 +1,6 @@
 package store;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +25,10 @@ public class BookStore implements Store {
 		this.name = name;
 		this.address = address;
 		
+		cashiers = new ArrayList<>(1);
+		books = new ArrayList<>(1);
+		soldBooks = new ArrayList<>(1);
+		receiptsIssued = new ArrayList<>();
 	}
 	
 	@Override
@@ -75,6 +80,8 @@ public class BookStore implements Store {
 				
 				SoldProduct productToSell = new SoldProduct(product, quantity);
 				soldBooks.add(productToSell); 
+				
+				generatedRevenue += productToSell.getGeneratedRevenue();
 				
 				
 			} catch (OutOfStockProductException ex) {
@@ -135,5 +142,6 @@ public class BookStore implements Store {
 		return books.contains((Book) product);
 		
 	}
+	
 
 }

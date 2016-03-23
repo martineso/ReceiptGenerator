@@ -36,5 +36,11 @@ public class SoldProduct implements Sellable {
 		
 		return this.product.getId();
 	}
+	
+	@Override
+	public double getGeneratedRevenue() {
+		
+		return (this.getPrice() * this.getQuantitySold());
+	}
 
 }

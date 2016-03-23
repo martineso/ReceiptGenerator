@@ -26,30 +26,24 @@ public class ReceiptGeneratorDemo {
 		books.add(new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", 3453, 15.50, true));
 		books.add(new Book("Oliver Twist", "Dickens", "Aurora", date, 2, 0.50, true));
 		
-		ArrayList<SoldProduct> soldBooks = new ArrayList<>();
+		Cashier Ivan = new Cashier("Ivan");
+		BookStoreOne.addCashier(Ivan);
+
+		BookStoreOne.addNewStock(b);
+		BookStoreOne.addNewStock(b1);
+		ArrayList<Book> bookstoresbooks = (ArrayList<Book>) BookStoreOne.getProductsList();
+		System.out.println(bookstoresbooks.get(0).getQuantity());
 		
-		for(Book product : books) {
-			
-			// Sell 3 books of each book
-			try {
-				
-				soldBooks.add(new SoldProduct(product, 3));
-				
-			} catch (Exception e) {
-				
-				System.out.println(e.getMessage());
-				
-			}
-			
-		}
 		
-		System.out.println(books.indexOf(b));
-		System.out.println(books.contains(b));
 		
-		Receipt r = Receipt.generateReceipt(BookStoreOne, new Cashier("Ivan"), soldBooks);
-		System.out.println(r);
+		BookStoreOne.sell(Ivan, b, 23);
 		
-		r.writeToFile();
+		System.out.println(bookstoresbooks.get(0).getQuantity());
+		System.out.println(BookStoreOne.getRevenue());
+		//Receipt r = Receipt.generateReceipt(BookStoreOne, new Cashier("Ivan"), soldBooks);
+		//System.out.println(r);
+		
+		//r.writeToFile();
 		
 	}
 	
