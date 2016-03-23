@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import cashier.Cashier;
-import receipt.product.Product;
+import receipt.product.Sellable;
 import store.Store;
 
 public class Receipt implements Serializable {
@@ -18,8 +18,11 @@ public class Receipt implements Serializable {
 
 	private static final long serialVersionUID = 3880371106220952098L;
 	
+	private static final int PRODUCT_NAME_LENGTH = 30;
+	private static final int PRODUCT_QUANTITY_LENGTH = 10;
+	private static final int PRODUCT_PRICE_LENGTH = 10;
 	
-	private Collection<? extends Product> soldProducts;
+	private Collection<? extends Sellable> soldProducts;
 	private String receiptID; 
 	private String issuedOn;
 	private Cashier cashier;
@@ -29,7 +32,7 @@ public class Receipt implements Serializable {
 	private static double generatedRevenue = 0;
 	
 	
-	public static Receipt generateReceipt(Store store, Cashier cashier, Collection<? extends Product> soldProducts) {
+	public static Receipt generateReceipt(Store store, Cashier cashier, Collection<? extends Sellable> soldProducts) {
 		
 		Receipt receipt = new Receipt(store, cashier, soldProducts);
 		
@@ -37,7 +40,7 @@ public class Receipt implements Serializable {
 		
 	}
 	
-	private Receipt(Store store, Cashier cashier, Collection<? extends Product> soldProducts) {
+	private Receipt(Store store, Cashier cashier, Collection<? extends Sellable> soldProducts) {
 		
 		this.store = store;
 		this.cashier = cashier;
@@ -57,9 +60,11 @@ public class Receipt implements Serializable {
 		
 		if(!soldProducts.isEmpty()) {
 			
-			for(Product product : soldProducts) {
+			for(Sellable product : soldProducts) {
 				
-				total += product.getPrice();
+				// Calculates the total price of the item based
+				// on how many items are sold and its current value
+				total += (product.getPrice() * product.getQuantitySold());
 			}
 			
 		}
@@ -71,37 +76,63 @@ public class Receipt implements Serializable {
 	private String whitespacePaddedProductPrice(double price) {
 		
 		String productPrice = String.valueOf(price);
-		char[] whitespace = new char[10 - productPrice.length()];
+		char[] whitespace = new char[PRODUCT_PRICE_LENGTH - productPrice.length()];
 		productPrice = new String(whitespace).replace('\u0000', ' ') + productPrice;
 		
 		return productPrice;
 		
 	}
 	
-	private String getProductsNamesAndValue() {
+	private String whitespacePaddedProductQuantity(int quantity) {
+		
+		
+		// productQuantity.length() + 2 is calculated due to the fact
+		// that the quantity column will show the info in the following
+		// format
+		//				Quantity:
+		//					1 x
+		// This means that we have two extra chars for the single whitespace
+		// character and the 'x' character.
+		
+		String productQuantity = String.valueOf(quantity);
+		char[] whitespace = new char[PRODUCT_QUANTITY_LENGTH - (productQuantity.length() + 2)];
+		productQuantity = new String(whitespace).replace('\u0000', ' ') + productQuantity + ' ' + 'x';
+		
+		return productQuantity;
+	}
+	
+	private String getProductsNamesValuesAndQuantity() {
 		
 		StringBuilder sb = new StringBuilder();
-		
+		/**
+		 * The length of the name column is equal to PRODUCT_NAME_LENGTH
+		 * The length of the quantity column is equal to PRODUCT_QUANTITY_LENGTH
+		 * The length of the price column is equal to PRODUCT_PRICE_LENGTH
+		 */
 		if(!soldProducts.isEmpty()) {
 			
-			for(Product product : soldProducts) {
+			for(Sellable product : soldProducts) {
 				
-				//sb.append(product.getName() + " " + product.getPrice() + "\n");
-				//sb.append(product.getName());
-				
-				if(product.getName().length() > 30) {
+				if(product.getName().length() > PRODUCT_NAME_LENGTH) {
 					
-					String stripped = product.getName().substring(0, 30);
+					// Retain the length of the name of the product 30 chars maximum
+					// to ensure that the size of the receipt is constant
 					
+					String strippedProductName = product.getName().substring(0, PRODUCT_NAME_LENGTH);
+					String productQuantity = whitespacePaddedProductQuantity(product.getQuantitySold());
 					String productPrice = whitespacePaddedProductPrice(product.getPrice());
-					sb.append(stripped + productPrice + "\n");
+					
+					sb.append(strippedProductName + productQuantity + productPrice + "\n");
 					
 				} else {
 					
-					char[] whitespace = new char[30 - product.getName().length()];
+					char[] whitespace = new char[PRODUCT_NAME_LENGTH - product.getName().length()];
 					String paddedName = product.getName() + new String(whitespace).replace('\u0000', ' ');
-					String productPrice = whitespacePaddedProductPrice(product.getPrice());;
-					sb.append(paddedName + " " + productPrice + "\n");
+					String productQuantity = whitespacePaddedProductQuantity(product.getQuantitySold());
+					String productPrice = whitespacePaddedProductPrice(product.getPrice());
+					
+					
+					sb.append(paddedName + productQuantity + " " + productPrice + "\n");
 				}
 				
 			}
@@ -155,29 +186,28 @@ public class Receipt implements Serializable {
 		
 		StringBuilder sb = new StringBuilder();
 		
+		String productsTotal = whitespacePaddedProductPrice(getProductsTotal());
+		
+		String whitespacePaddingItem = new String(new char[PRODUCT_NAME_LENGTH - 4]).replace('\u0000', ' ');
+		String whitespacePaddingQuantity = new String(new char[PRODUCT_QUANTITY_LENGTH - 8]).replace('\u0000', ' ');
+		String whitespacePaddingPrice = new String(new char[PRODUCT_PRICE_LENGTH - 4]).replace('\u0000', ' ');
+		String whitespacePaddingTotal = new String(new char[(PRODUCT_NAME_LENGTH + PRODUCT_PRICE_LENGTH + PRODUCT_QUANTITY_LENGTH) - (6 + productsTotal.length())]).replace('\u0000', ' ');
+		
 		if(this.store != null){
 			sb.append(this.store.getName() + "\n");
 		} else {
 			
 			sb.append("None\n");
 		}
+		
 		sb.append("ID: " + this.getReceiptID() + "\n");
-		sb.append("Item" + new String(new char[40 - 4 - 5]).replace('\u0000', ' ') + " " + "Price" + "\n"); 
+		sb.append("Item" + whitespacePaddingItem + whitespacePaddingQuantity + "Quantity" + whitespacePaddingPrice + "Price" + "\n");
 		sb.append("-----" + "\n");
-		sb.append(getProductsNamesAndValue());
+		sb.append(getProductsNamesValuesAndQuantity());
 		sb.append("-----" + "\n");
-		/** 
-		*   char[] whitespace's size is computed given that
-		*   the line in the receipt should not exceed 40 characters
-		*   where 30 characters are allocated for the product name
-		*   and 10 characters are allocated for the price of the time.
-		*   The total length of the padding in the "Total: " line should
-		*   be 30 - "Total: ".length(). This always results to 23 whitespace
-		*   characters.
-		**/
-		String productsTotal = whitespacePaddedProductPrice(getProductsTotal());
-		char[] whitespace = new char[23];
-		sb.append("Total: " + new String(whitespace).replace('\u0000', ' ') + " " + productsTotal + "\n");
+		
+		
+		sb.append("Total: " + whitespacePaddingTotal + productsTotal + "\n");
 		sb.append("Your cashier: " + this.cashier.getName() + "\n" + this.issuedOn);
 		
 		return sb.toString();

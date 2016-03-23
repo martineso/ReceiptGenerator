@@ -1,11 +1,11 @@
 BookStoreOne
-ID: f4a27a0d-6bd7-4e0c-8c97-9b4dc0f3aabf
-Item                                Price
+ID: 263e451e-f03d-46a0-9009-3740e973ac06
+Item                            Quantity      Price
 -----
-Slaughterhouse 5                     25.5
-Of Mice and Men                      15.5
-Oliver Twist                          0.5
+Slaughterhouse 5                    25 x       25.5
+Of Mice and Men                     25 x       15.5
+Oliver Twist                        25 x        0.5
 -----
-Total:                               41.5
+Total:                                       1037.5
 Your cashier: Ivan
-Tue Mar 22 20:39:51 EET 2016
+Wed Mar 23 12:08:28 EET 2016

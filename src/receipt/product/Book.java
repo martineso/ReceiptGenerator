@@ -1,6 +1,8 @@
 package receipt.product;
 import java.util.UUID;
 
+import receipt.product.exceptions.OutOfStockProductException;
+
 public class Book implements Product {
 
 	private String name, author, publisher;
@@ -70,6 +72,20 @@ public class Book implements Product {
 	public int getQuantity() {
 		
 		return this.copies;
+		
+	}
+
+	@Override
+	public void decreaseQuantity(int quantity) throws OutOfStockProductException {
+		
+		if(quantity > this.copies) {
+			
+			throw new OutOfStockProductException("Out of stock, try a different value!");
+			
+		} else {
+			
+			this.copies -= quantity;
+		}
 		
 	}
 	
