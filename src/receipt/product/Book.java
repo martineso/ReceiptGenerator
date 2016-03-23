@@ -80,12 +80,19 @@ public class Book implements Product {
 		
 		if(quantity > this.copies) {
 			
-			throw new OutOfStockProductException("Out of stock, try a different value!");
+			throw new OutOfStockProductException("Out of stock, check storage!");
 			
 		} else {
 			
 			this.copies -= quantity;
 		}
+		
+	}
+	
+	@Override
+	public void increaseQuantity(int quantity) {
+		
+		this.copies += quantity;
 		
 	}
 	

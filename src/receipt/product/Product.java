@@ -10,5 +10,5 @@ public interface Product {
 	int getQuantity();
 	
 	void decreaseQuantity(int quantity) throws OutOfStockProductException;
-	
+	void increaseQuantity(int quantity);
 }

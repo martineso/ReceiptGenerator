@@ -73,6 +73,10 @@ public class Receipt implements Serializable {
 		
 	}
 	
+	/* Utility methods
+	 * for internal use only!
+	 */
+	
 	private String whitespacePaddedProductPrice(double price) {
 		
 		String productPrice = String.valueOf(price);
@@ -132,7 +136,7 @@ public class Receipt implements Serializable {
 					String productPrice = whitespacePaddedProductPrice(product.getPrice());
 					
 					
-					sb.append(paddedName + productQuantity + " " + productPrice + "\n");
+					sb.append(paddedName + productQuantity + productPrice + "\n");
 				}
 				
 			}
@@ -148,8 +152,9 @@ public class Receipt implements Serializable {
 	
 	public void writeToFile() {
 		
+		
 		try(Scanner sc = new Scanner(this.toString());
-				PrintWriter writer = new PrintWriter(new FileOutputStream("res/receiptTemp"))) {
+				PrintWriter writer = new PrintWriter(new FileOutputStream("res/receipt-" + this.issuedOn + ".txt"))) {
 			
 			while(sc.hasNextLine()) {
 				
@@ -163,6 +168,7 @@ public class Receipt implements Serializable {
 		}
 		
 		System.out.println("Receipt written to a file" + "\n");
+		System.out.println("Date: " + this.issuedOn);
 		
 	}
 	
@@ -190,8 +196,8 @@ public class Receipt implements Serializable {
 		
 		String whitespacePaddingItem = new String(new char[PRODUCT_NAME_LENGTH - 4]).replace('\u0000', ' ');
 		String whitespacePaddingQuantity = new String(new char[PRODUCT_QUANTITY_LENGTH - 8]).replace('\u0000', ' ');
-		String whitespacePaddingPrice = new String(new char[PRODUCT_PRICE_LENGTH - 4]).replace('\u0000', ' ');
-		String whitespacePaddingTotal = new String(new char[(PRODUCT_NAME_LENGTH + PRODUCT_PRICE_LENGTH + PRODUCT_QUANTITY_LENGTH) - (6 + productsTotal.length())]).replace('\u0000', ' ');
+		String whitespacePaddingPrice = new String(new char[PRODUCT_PRICE_LENGTH - 5]).replace('\u0000', ' ');
+		String whitespacePaddingTotal = new String(new char[(PRODUCT_NAME_LENGTH + PRODUCT_PRICE_LENGTH + PRODUCT_QUANTITY_LENGTH) - (7 + productsTotal.length())]).replace('\u0000', ' ');
 		
 		if(this.store != null){
 			sb.append(this.store.getName() + "\n");

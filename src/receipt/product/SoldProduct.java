@@ -1,7 +1,5 @@
 package receipt.product;
 
-import receipt.product.exceptions.OutOfStockProductException;
-
 public class SoldProduct implements Sellable {
 
 	private int soldProducts;
@@ -12,8 +10,6 @@ public class SoldProduct implements Sellable {
 		
 		this.product = product;
 		this.soldProducts = quantity;
-		
-		this.reduceQuantity(product, quantity);
 		
 	}
 	
@@ -39,21 +35,6 @@ public class SoldProduct implements Sellable {
 	public String getId() {
 		
 		return this.product.getId();
-	}
-	
-	private void reduceQuantity(Product product, int quantity) {
-		
-		try {
-			
-			product.decreaseQuantity(quantity);
-			
-		} catch(OutOfStockProductException ex) {
-			
-			// Implement later
-			// 
-			System.out.println(ex.getMessage());
-		}
-		
 	}
 
 }
