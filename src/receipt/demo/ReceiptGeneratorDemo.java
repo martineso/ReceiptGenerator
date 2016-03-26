@@ -10,7 +10,7 @@ import receipt.product.SoldProduct;
 import receipt.product.exceptions.OutOfStockProductException;
 import receipt.receiptgenerator.Receipt;
 import store.BookStore;
-import store.exceptions.CashierNotFoundException;
+
 
 public class ReceiptGeneratorDemo {
 	
@@ -56,14 +56,7 @@ public class ReceiptGeneratorDemo {
 			System.out.println(e.getMessage());
 		}
 		
-		try {
-			
-			BookStoreOne.selectCashier("Matthew");
-			
-		} catch(CashierNotFoundException e) {
-			
-			System.out.println(e.getMessage());
-		}
+
 		
 		System.out.println("Quantity of item after being sold: " + bookstoresbooks.get(0).getQuantity());
 		System.out.println("Revenue generated: " + BookStoreOne.getRevenue());
