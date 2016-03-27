@@ -4,19 +4,23 @@ import java.util.Collection;
 import cashier.Cashier;
 import receipt.product.Product;
 import receipt.product.exceptions.OutOfStockProductException;
+import store.exceptions.UnsuccessfullOperationStoreException;
 
 public interface Store {
 	
 	String getName();
 	String getAddress();
+	double getRevenue();
+	Product getProduct(String name);
+	
 	
 	int getReceiptsIssued();
+	void generateReceipt(); 
 	Collection<? extends Product> getProductsList();
 	Collection<Cashier> getCashierList();
-	double getRevenue();
 	
 	void sell(Product product, int quantity) throws OutOfStockProductException;
-	void generateReceipt(); 
+	void deleteProduct(String name) throws UnsuccessfullOperationStoreException; 
 	void addNewStock(Product product);
 	void addCashier(Cashier cashier);
 	

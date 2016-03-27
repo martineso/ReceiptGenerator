@@ -1,8 +1,20 @@
 package store;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.sun.corba.se.impl.orbutil.ObjectWriter;
 
 import cashier.Cashier;
 import receipt.product.Book;
@@ -11,6 +23,7 @@ import receipt.product.SoldProduct;
 import receipt.product.exceptions.OutOfStockProductException;
 import receipt.receiptgenerator.Receipt;
 import store.exceptions.CashierNotFoundException;
+import store.exceptions.UnsuccessfullOperationStoreException;
 
 public class BookStore implements Store {
 
@@ -76,7 +89,7 @@ public class BookStore implements Store {
 	@Override
 	public void sell(Product product, int quantity) throws OutOfStockProductException {
 		
-		if(isInStock(product)) {
+		if(product != null) {
 		
 			try {
 				
@@ -172,11 +185,71 @@ public class BookStore implements Store {
 		
 	}
 	
-	private boolean isInStock(Product product) {
+	/*private boolean isInStock(Product product) {
 		
 		return books.contains((Book) product);
 		
+	}*/
+
+	@Override
+	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException{
+		
+		
+		if(getProduct(name) != null) {
+			
+			books.remove(getProduct(name));
+		} else {
+			
+			throw new UnsuccessfullOperationStoreException("Delete operation unsuccessful");
+			
+		}
+		
+	}
+
+	@Override
+	public Product getProduct(String name) {
+		
+		for(int i = 0; i < books.size(); ++i) {
+			
+			if(books.get(i).getName().equalsIgnoreCase(name)) {
+				
+				return books.get(i);
+				
+			} 
+		} 
+		
+		return null;
 	}
 	
+	// Load and Save methods
+	
+	private void loadDatabase() throws UnsuccessfullOperationStoreException{
+		
+		try(ObjectInputStream os = new ObjectInputStream
+				(new BufferedInputStream(new FileInputStream("res" + File.separator + this.getName() + " database")))) {
+			
+			try {
+				this.books = (List<Book>) os.readObject();
+			} catch (ClassNotFoundException e) {
+				
+				throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+				
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+			
+		} catch (IOException e) {
+			
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+		}
+		
+	}
+	
+	public void saveData() {
+		
+		// to be implemented
+	}
 
 }
