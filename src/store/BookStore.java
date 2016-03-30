@@ -43,7 +43,14 @@ public class BookStore implements Store {
 		cashiers = new ArrayList<>(1);
 		this.activeCashier = new Cashier("Ivan");
 		
-		books = new ArrayList<>(1);
+		try {
+			
+			loadDatabase();
+			
+		} catch(UnsuccessfullOperationStoreException ex) {
+			
+			this.books = new ArrayList<>(1);
+		}
 		soldBooks = new ArrayList<>(1);
 		receiptsIssued = new ArrayList<>(1);
 	}
@@ -89,7 +96,7 @@ public class BookStore implements Store {
 	@Override
 	public void sell(Product product, int quantity) throws OutOfStockProductException {
 		
-		if(product != null) {
+		if(isInStock(product)) {
 		
 			try {
 				
@@ -112,14 +119,20 @@ public class BookStore implements Store {
 		}
 		
 	}
-
+	
+	private boolean isInStock(Product product) {
+		
+		return books.contains((Book) product);
+	}
+	
 	@Override
 	public void addNewStock(Product product) {
 		
 		// If the store does not have the book
-		// add a new product to its stock
-		// If not, find the book in the collection
-		// and increase the number of books by 1
+		// add the book in a new slot.
+		// If the book is already in stock, find the book in the collection
+		// and increase the number of books by with the number of copies
+		// the product being added has.
 		
 		if(!books.contains((Book)product)) {
 			
@@ -127,7 +140,7 @@ public class BookStore implements Store {
 			
 		} else {
 			
-			books.get(books.indexOf((Book)product)).increaseQuantity(1);
+			books.get(books.indexOf((Book)product)).increaseQuantity(product.getQuantity());
 			
 		}
 		
@@ -181,15 +194,12 @@ public class BookStore implements Store {
 		}
 		
 		// Empty the receiptsIssued array
+		// Can implement a save method in the future 
+		// if necessary
 		receiptsIssued.clear();
 		
 	}
 	
-	/*private boolean isInStock(Product product) {
-		
-		return books.contains((Book) product);
-		
-	}*/
 
 	@Override
 	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException{
@@ -198,6 +208,7 @@ public class BookStore implements Store {
 		if(getProduct(name) != null) {
 			
 			books.remove(getProduct(name));
+			
 		} else {
 			
 			throw new UnsuccessfullOperationStoreException("Delete operation unsuccessful");
@@ -223,33 +234,42 @@ public class BookStore implements Store {
 	
 	// Load and Save methods
 	
-	private void loadDatabase() throws UnsuccessfullOperationStoreException{
+	private void loadDatabase() throws UnsuccessfullOperationStoreException {
 		
-		try(ObjectInputStream os = new ObjectInputStream
-				(new BufferedInputStream(new FileInputStream("res" + File.separator + this.getName() + " database")))) {
+		try(ObjectInputStream in = new ObjectInputStream
+				(new BufferedInputStream(new FileInputStream("res" + File.separator + this.getName() + "-Books")))) {
 			
 			try {
-				this.books = (List<Book>) os.readObject();
+				this.books = (List<Book>) in.readObject();
 			} catch (ClassNotFoundException e) {
 				
-				throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+				throw new UnsuccessfullOperationStoreException("Error while casting to \"List<Book>\"");
 				
 			}
 			
 		} catch (FileNotFoundException e) {
 			
-			throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. File not found!");
 			
 		} catch (IOException e) {
 			
-			throw new UnsuccessfullOperationStoreException("Cannot read the file. Try again!");
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. System error!");
 		}
 		
 	}
 	
-	public void saveData() {
+	public void saveDatabase() throws UnsuccessfullOperationStoreException {
 		
-		// to be implemented
+		try(ObjectOutputStream objectWriter = new ObjectOutputStream(new FileOutputStream("res" + File.separator + this.getName() + "-Books.db"))) {
+			
+			objectWriter.writeObject(this.books);
+			
+		} catch (FileNotFoundException e) {
+			throw new UnsuccessfullOperationStoreException("Error! Cannot write to file!");
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException("Write to file error (unspecified)!");
+		}
+		
 	}
 
 }

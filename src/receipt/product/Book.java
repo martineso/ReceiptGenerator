@@ -1,9 +1,10 @@
 package receipt.product;
+import java.io.Serializable;
 import java.util.UUID;
 
 import receipt.product.exceptions.OutOfStockProductException;
 
-public class Book implements Product {
+public class Book implements Product, Serializable {
 
 	private String name, author, publisher;
 	private String issueDate;
