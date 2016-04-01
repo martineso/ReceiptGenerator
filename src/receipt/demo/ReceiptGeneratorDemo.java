@@ -1,5 +1,6 @@
 package receipt.demo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,8 +9,8 @@ import receipt.product.Book;
 import receipt.product.Product;
 import receipt.product.SoldProduct;
 import receipt.product.exceptions.OutOfStockProductException;
-import receipt.receiptgenerator.Receipt;
 import store.BookStore;
+import store.exceptions.UnsuccessfullOperationStoreException;
 
 
 public class ReceiptGeneratorDemo {
@@ -40,6 +41,8 @@ public class ReceiptGeneratorDemo {
 
 		BookStoreOne.addNewStock(b);
 		BookStoreOne.addNewStock(b1);
+		
+		@SuppressWarnings("unchecked")
 		ArrayList<Book> bookstoresbooks = (ArrayList<Book>) BookStoreOne.getProductsList();
 		System.out.println("Initial quantity: " + bookstoresbooks.get(0).getQuantity());
 		
@@ -50,10 +53,14 @@ public class ReceiptGeneratorDemo {
 			BookStoreOne.sell(b, 35);
 			BookStoreOne.generateReceipt();
 			BookStoreOne.writeReceiptsToFile();
+			BookStoreOne.getNumberOfReceiptsIssued();
 			
 		} catch(OutOfStockProductException e) {
 			
 			System.out.println(e.getMessage());
+			
+		} catch (UnsuccessfullOperationStoreException e) {
+			System.err.println(e.getMessage());
 		}
 		
 

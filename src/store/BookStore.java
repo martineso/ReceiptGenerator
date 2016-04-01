@@ -1,8 +1,12 @@
 package store;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 
 import cashier.Cashier;
 import receipt.product.Book;
@@ -11,6 +15,8 @@ import receipt.product.SoldProduct;
 import receipt.product.exceptions.OutOfStockProductException;
 import receipt.receiptgenerator.Receipt;
 import store.exceptions.CashierNotFoundException;
+import store.exceptions.UnsuccessfullOperationStoreException;
+import store.file.service.StoreFileManager;
 
 public class BookStore implements Store {
 
@@ -28,9 +34,17 @@ public class BookStore implements Store {
 		this.address = address;
 		
 		cashiers = new ArrayList<>(1);
+		
 		this.activeCashier = new Cashier("Ivan");
 		
-		books = new ArrayList<>(1);
+		try {
+			
+			loadDatabase();
+			
+		} catch(UnsuccessfullOperationStoreException ex) {
+			
+			this.books = new ArrayList<>(1);
+		}
 		soldBooks = new ArrayList<>(1);
 		receiptsIssued = new ArrayList<>(1);
 	}
@@ -48,7 +62,7 @@ public class BookStore implements Store {
 	}
 
 	@Override
-	public int getReceiptsIssued() {
+	public int getNumberOfReceiptsIssued() {
 		
 		return receiptsIssued.size();
 		
@@ -95,18 +109,28 @@ public class BookStore implements Store {
 			
 		} else {
 			
-			throw new OutOfStockProductException("No sufficient availability!");
+			throw new OutOfStockProductException("The book is not in stock!");
 		}
 		
 	}
-
+	
+	private boolean isInStock(Product product) {
+		
+		return books.contains((Book) product);
+	}
+	
 	@Override
 	public void addNewStock(Product product) {
 		
 		// If the store does not have the book
-		// add a new product to its stock
-		// If not, find the book in the collection
-		// and increase the number of books by 1
+		// add the book in a new slot.
+		// If the book is already in stock, find the book in the collection
+		// and increase the number of books by with the number of copies
+		// the product being added has.
+		
+		if(product == null) {
+			return;
+		}
 		
 		if(!books.contains((Book)product)) {
 			
@@ -114,7 +138,7 @@ public class BookStore implements Store {
 			
 		} else {
 			
-			books.get(books.indexOf((Book)product)).increaseQuantity(1);
+			books.get(books.indexOf((Book)product)).increaseQuantity(product.getQuantity());
 			
 		}
 		
@@ -159,24 +183,86 @@ public class BookStore implements Store {
 		
 	}
 	
-	public void writeReceiptsToFile() {
+	public void writeReceiptsToFile() throws UnsuccessfullOperationStoreException {
 		
 		for(Receipt r : receiptsIssued) {
 			
-			r.writeToFile();
+			try {
+				r.writeToFile();
+				
+			} catch (IOException e) {
+				throw new UnsuccessfullOperationStoreException("Cannot write receipt to file!");
+			}
 			
 		}
 		
-		// Empty the receiptsIssued array
+		// Empty the receiptsIssued list
+		// Can implement a save method in the future 
+		// if necessary
 		receiptsIssued.clear();
 		
 	}
 	
-	private boolean isInStock(Product product) {
+
+	@Override
+	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException {
 		
-		return books.contains((Book) product);
+		
+		if(getProduct(name) != null) {
+			
+			books.remove(getProduct(name));
+			
+		} else {
+			
+			throw new UnsuccessfullOperationStoreException("Delete operation unsuccessful");
+			
+		}
 		
 	}
-	
 
+	@Override
+	public Product getProduct(String name) {
+		
+		for(int i = 0; i < books.size(); ++i) {
+			
+			if(books.get(i).getName().equalsIgnoreCase(name)) {
+				
+				return books.get(i);
+				
+			} 
+		} 
+		
+		return null;
+	}
+	
+	// Load and Save methods
+	private void loadDatabase() throws UnsuccessfullOperationStoreException {
+		
+		File path = new File("res" + File.separator + this.getName() + "-Books.db");
+		
+		try {
+			this.books = StoreFileManager.loadBooksDatabase(path);
+			
+		} catch (FileNotFoundException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		} catch (ClassNotFoundException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		}
+	}
+	
+	public void saveDatabase() throws UnsuccessfullOperationStoreException {
+		
+		File path = new File("res" + File.separator + this.getName() + "-Books.db");
+		
+		try {
+			StoreFileManager.saveBooksDatabase(this.books, path);
+			
+		} catch (FileNotFoundException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		}
+	}
 }

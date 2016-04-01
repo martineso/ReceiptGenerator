@@ -1,7 +1,8 @@
 package receipt.receiptgenerator;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
@@ -46,14 +47,20 @@ public class Receipt implements Serializable {
 		this.cashier = cashier;
 		this.soldProducts = soldProducts;
 		
-		this.receiptID = UUID.randomUUID().toString();
+		this.receiptID = UUID.fromString(store.getName()).toString();
 		this.issuedOn = new Date().toString();
-		
+
 		generatedReceipts++;
 		generatedRevenue += this.getProductsTotal();
 		
 	}
 	
+	/**
+	 * Calculates the total price of the item based
+	 * on how many items are sold and the value of each product
+	 * @return The total value of all items in the Collection of sold products;
+	 * returns 0, if there are no items in the collection i.e. no sold products.
+	 */
 	private double getProductsTotal() {
 		
 		double total = 0;
@@ -62,15 +69,12 @@ public class Receipt implements Serializable {
 			
 			for(Sellable product : soldProducts) {
 				
-				// Calculates the total price of the item based
-				// on how many items are sold and its current value
 				total += (product.getPrice() * product.getQuantitySold());
 			}
 			
 		}
 		
 		return total;
-		
 	}
 	
 	/* Utility methods
@@ -105,14 +109,20 @@ public class Receipt implements Serializable {
 		return productQuantity;
 	}
 	
+	/**
+	 * @return Generates the portion of the string containing each item sold, the number of items sold
+	 * and the price per item. 
+	 */
 	private String getProductsNamesValuesAndQuantity() {
-		
-		StringBuilder sb = new StringBuilder();
+	
 		/**
 		 * The length of the name column is equal to PRODUCT_NAME_LENGTH
 		 * The length of the quantity column is equal to PRODUCT_QUANTITY_LENGTH
 		 * The length of the price column is equal to PRODUCT_PRICE_LENGTH
 		 */
+	
+		StringBuilder sb = new StringBuilder();
+
 		if(!soldProducts.isEmpty()) {
 			
 			for(Sellable product : soldProducts) {
@@ -148,28 +158,6 @@ public class Receipt implements Serializable {
 			return "No products sold";
 			
 		}
-	}
-	
-	public void writeToFile() {
-		
-		
-		try(Scanner sc = new Scanner(generateReceiptAsString());
-				PrintWriter writer = new PrintWriter(new FileOutputStream("res/receipt-" + this.issuedOn + ".txt"))) {
-			
-			while(sc.hasNextLine()) {
-				
-				writer.write(sc.nextLine() + "\n");
-				
-			}
-						
-		} catch (FileNotFoundException e) {
-			
-			e.printStackTrace();
-		}
-		
-		System.out.println("Receipt written to a file" + "\n");
-		System.out.println("Date: " + this.issuedOn);
-		
 	}
 	
 	public String getReceiptID() {
@@ -217,6 +205,22 @@ public class Receipt implements Serializable {
 		
 		return sb.toString();
 		
+	}
+	
+	public void writeToFile() throws IOException {
+		
+		
+		try(Scanner sc = new Scanner(generateReceiptAsString());
+				FileWriter fileWriter = new FileWriter("res/receipt-" + this.issuedOn + ".txt");
+				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+				PrintWriter writer = new PrintWriter(bufferedWriter)) {
+			
+			while(sc.hasNextLine()) {
+				
+				writer.write(sc.nextLine() + "\n");
+				
+			}				
+		}
 	}
 	
 }

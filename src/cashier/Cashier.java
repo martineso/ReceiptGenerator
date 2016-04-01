@@ -21,4 +21,6 @@ public class Cashier {
 	public String getName() {
 		return name;
 	}
+	
+	
 }
