@@ -15,16 +15,19 @@ import store.exceptions.UnsuccessfullOperationStoreException;
 
 public class ReceiptGeneratorDemo {
 	
+	static String date = new Date().toString();
+	static Book b1 = new Book("Slaughterhouse 5", "Vonnegut", "Aurora", date, 35, 25.53, true);
+	static Book b2 = new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", 3453, 15.50, true);
+	static Book b3 = new Book("Oliver Twist", "Dickens", "Aurora", date, 2, 0.50, true);
+	static Cashier Ivan = new Cashier("Ivan");
+	
 	public static void main(String[] args) {
 		
 		BookStore BookStoreOne = new BookStore("BookStoreOne", "Buxton blvd. 708, Sofia");
 		
-		Product b = new Book("Slaughterhouse 5", "Vonnegut", "Aurora", "12/07/1965", 35, 25.53, true);
-		Book b1 = new Book("Slaughterhouse 5", "Vonnegut", "Aurora", "12/07/1965", 35, 25.53, true);
-		String date = new Date().toString();
 		ArrayList<Book> books = new ArrayList<>();
-		books.add((Book)b);
 		books.add(b1);
+<<<<<<< HEAD
 		books.add(new Book("Slaughterhouse 5", "Vonnegut", "Aurora", date, 35, 25.53, true));
 		books.add(new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", 3453, 15.50, true));
 		books.add(new Book("Oliver Twist", "Dickens", "Aurora", date, 2, 0.50, true));
@@ -67,9 +70,12 @@ public class ReceiptGeneratorDemo {
 		
 		System.out.println("Quantity of item after being sold: " + bookstoresbooks.get(0).getQuantity());
 		System.out.println("Revenue generated: " + BookStoreOne.getRevenue());
+=======
+		books.add(b2);
+		books.add(b3);
 		
-	//	Receipt r = Receipt.generateReceipt(BookStoreOne, Ivan, soldProductsTemp);
-		//r.writeToFile();
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
+		
 		
 	}
 	

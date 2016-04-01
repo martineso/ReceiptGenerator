@@ -5,10 +5,14 @@ import java.util.UUID;
 import receipt.product.exceptions.OutOfStockProductException;
 
 public class Book implements Product, Serializable {
+<<<<<<< HEAD
 	
 	public static final int FIELDS_COUNT = 7;
 	
 	private static final long serialVersionUID = 1L;
+=======
+
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 	private String name, author, publisher;
 	private String issueDate;
 	private int copies;

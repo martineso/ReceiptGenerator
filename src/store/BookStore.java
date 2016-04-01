@@ -1,12 +1,29 @@
 package store;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+=======
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+<<<<<<< HEAD
+=======
+import com.sun.corba.se.impl.orbutil.ObjectWriter;
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 
 import cashier.Cashier;
 import receipt.product.Book;
@@ -16,7 +33,10 @@ import receipt.product.exceptions.OutOfStockProductException;
 import receipt.receiptgenerator.Receipt;
 import store.exceptions.CashierNotFoundException;
 import store.exceptions.UnsuccessfullOperationStoreException;
+<<<<<<< HEAD
 import store.file.service.StoreFileManager;
+=======
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 
 public class BookStore implements Store {
 
@@ -127,10 +147,13 @@ public class BookStore implements Store {
 		// If the book is already in stock, find the book in the collection
 		// and increase the number of books by with the number of copies
 		// the product being added has.
+<<<<<<< HEAD
 		
 		if(product == null) {
 			return;
 		}
+=======
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 		
 		if(!books.contains((Book)product)) {
 			
@@ -196,7 +219,11 @@ public class BookStore implements Store {
 			
 		}
 		
+<<<<<<< HEAD
 		// Empty the receiptsIssued list
+=======
+		// Empty the receiptsIssued array
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 		// Can implement a save method in the future 
 		// if necessary
 		receiptsIssued.clear();
@@ -205,7 +232,11 @@ public class BookStore implements Store {
 	
 
 	@Override
+<<<<<<< HEAD
 	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException {
+=======
+	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException{
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 		
 		
 		if(getProduct(name) != null) {
@@ -217,8 +248,68 @@ public class BookStore implements Store {
 			throw new UnsuccessfullOperationStoreException("Delete operation unsuccessful");
 			
 		}
+<<<<<<< HEAD
 		
 	}
+=======
+		
+	}
+
+	@Override
+	public Product getProduct(String name) {
+		
+		for(int i = 0; i < books.size(); ++i) {
+			
+			if(books.get(i).getName().equalsIgnoreCase(name)) {
+				
+				return books.get(i);
+				
+			} 
+		} 
+		
+		return null;
+	}
+	
+	// Load and Save methods
+	
+	private void loadDatabase() throws UnsuccessfullOperationStoreException {
+		
+		try(ObjectInputStream in = new ObjectInputStream
+				(new BufferedInputStream(new FileInputStream("res" + File.separator + this.getName() + "-Books")))) {
+			
+			try {
+				this.books = (List<Book>) in.readObject();
+			} catch (ClassNotFoundException e) {
+				
+				throw new UnsuccessfullOperationStoreException("Error while casting to \"List<Book>\"");
+				
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. File not found!");
+			
+		} catch (IOException e) {
+			
+			throw new UnsuccessfullOperationStoreException("Cannot read the file. System error!");
+		}
+		
+	}
+	
+	public void saveDatabase() throws UnsuccessfullOperationStoreException {
+		
+		try(ObjectOutputStream objectWriter = new ObjectOutputStream(new FileOutputStream("res" + File.separator + this.getName() + "-Books.db"))) {
+			
+			objectWriter.writeObject(this.books);
+			
+		} catch (FileNotFoundException e) {
+			throw new UnsuccessfullOperationStoreException("Error! Cannot write to file!");
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException("Write to file error (unspecified)!");
+		}
+		
+	}
+>>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 
 	@Override
 	public Product getProduct(String name) {
