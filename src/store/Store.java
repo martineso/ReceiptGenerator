@@ -16,7 +16,6 @@ public interface Store {
 	
 
 	int getNumberOfReceiptsIssued();
-	int getReceiptsIssued();
 	void generateReceipt(); 
 	Collection<? extends Product> getProductsList();
 	Collection<Cashier> getCashierList();

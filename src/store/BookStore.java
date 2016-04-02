@@ -25,17 +25,24 @@ public class BookStore implements Store {
 	private List<Book> books;
 	private List<SoldProduct> soldBooks;
 	private List<Receipt> receiptsIssued;
+	
 	private static double generatedRevenue = 0;
+	private static int generatedReceipts = 0;
 
 	public BookStore(String name, String address) {
 
 		this.name = name;
 		this.address = address;
 
-		cashiers = new ArrayList<>(1);
-
-		this.activeCashier = new Cashier("Ivan", "id");
-
+		try {
+		
+			loadCashiers();
+			
+		} catch(UnsuccessfullOperationStoreException e) {
+			
+			cashiers = new ArrayList<>(1);
+		}
+		
 		try {
 
 			loadDatabase();
@@ -44,8 +51,9 @@ public class BookStore implements Store {
 
 			this.books = new ArrayList<>(1);
 		}
-		soldBooks = new ArrayList<>(1);
-		receiptsIssued = new ArrayList<>(1);
+		
+		soldBooks = new ArrayList<>(0);
+		receiptsIssued = new ArrayList<>(0);
 	}
 
 	@Override
@@ -63,7 +71,7 @@ public class BookStore implements Store {
 	@Override
 	public int getNumberOfReceiptsIssued() {
 
-		return receiptsIssued.size();
+		return generatedReceipts;
 
 	}
 
@@ -101,7 +109,7 @@ public class BookStore implements Store {
 				generatedRevenue += productToSell.getGeneratedRevenue();
 
 
-			} catch (OutOfStockProductException ex) {
+			} catch (OutOfStockProductException e) {
 
 				throw new OutOfStockProductException("No sufficient availability!");
 			}
@@ -161,7 +169,7 @@ public class BookStore implements Store {
 	public void generateReceipt() {
 
 		receiptsIssued.add(Receipt.generateReceipt(this, this.activeCashier, this.soldBooks));
-		
+		generatedReceipts++;
 	}
 
 	public void selectCashier(String name) throws CashierNotFoundException {
@@ -270,10 +278,30 @@ public class BookStore implements Store {
 			throw new UnsuccessfullOperationStoreException(e.getMessage());
 		}
 	}
-
-	@Override
-	public int getReceiptsIssued() {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	private void loadCashiers() throws UnsuccessfullOperationStoreException {
+		
+		File path = new File("res" + File.separator + this.getName() + "-Cashiers.db");
+		try {
+			this.cashiers = StoreFileManager.loadCashiersList(path);
+		} catch (FileNotFoundException e) {
+			
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		}
 	}
+	
+	public void saveCashiersList() throws UnsuccessfullOperationStoreException {
+		
+		File path = new File("res" + File.separator + this.getName() + "-Cashiers.db");
+		
+		try {
+			StoreFileManager.saveCashiersList(cashiers, path);
+		} catch (UnsuccessfullOperationStoreException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		} catch (IOException e) {
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
+		}
+	}
+
 }
