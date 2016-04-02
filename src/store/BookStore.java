@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import cashier.Cashier;
 import receipt.product.Book;
@@ -40,7 +39,7 @@ public class BookStore implements Store {
 			
 		} catch(UnsuccessfullOperationStoreException e) {
 			
-			cashiers = new ArrayList<>(1);
+			this.cashiers = new ArrayList<>();
 		}
 		
 		try {
@@ -49,11 +48,11 @@ public class BookStore implements Store {
 
 		} catch(UnsuccessfullOperationStoreException ex) {
 
-			this.books = new ArrayList<>(1);
+			this.books = new ArrayList<>();
 		}
 		
-		soldBooks = new ArrayList<>(0);
-		receiptsIssued = new ArrayList<>(0);
+		soldBooks = new ArrayList<>();
+		receiptsIssued = new ArrayList<>();
 	}
 
 	@Override
@@ -76,14 +75,14 @@ public class BookStore implements Store {
 	}
 
 	@Override
-	public Collection<? extends Product> getProductsList() {
+	public List<? extends Product> getProductsList() {
 
 		return this.books;
 
 	}
 
 	@Override
-	public Collection<Cashier> getCashierList() {
+	public List<Cashier> getCashierList() {
 
 		return this.cashiers;
 	}
@@ -153,15 +152,20 @@ public class BookStore implements Store {
 	}
 
 	@Override
-	public void addCashier(Cashier cashier) {
-
+	public void addCashier(Cashier cashier) throws UnsuccessfullOperationStoreException {
+		
+		if(cashiers.isEmpty()) {
+			cashiers.add(cashier);
+			return;
+		}
+		
 		if(!cashiers.contains(cashier)) {
 
 			cashiers.add(cashier);
 
-		} 
-
-		else return;
+		} else {
+			throw new UnsuccessfullOperationStoreException("Unable to add cashier!");
+		};
 
 	}
 
@@ -254,6 +258,7 @@ public class BookStore implements Store {
 		File path = new File("res" + File.separator + this.getName() + "-Books.db");
 
 		try {
+			
 			this.books = StoreFileManager.loadBooksDatabase(path);
 
 		} catch (FileNotFoundException e) {
@@ -270,6 +275,7 @@ public class BookStore implements Store {
 		File path = new File("res" + File.separator + this.getName() + "-Books.db");
 
 		try {
+			
 			StoreFileManager.saveBooksDatabase(this.books, path);
 
 		} catch (FileNotFoundException e) {
@@ -285,7 +291,7 @@ public class BookStore implements Store {
 		try {
 			this.cashiers = StoreFileManager.loadCashiersList(path);
 		} catch (FileNotFoundException e) {
-			
+			throw new UnsuccessfullOperationStoreException(e.getMessage());
 		} catch (IOException e) {
 			throw new UnsuccessfullOperationStoreException(e.getMessage());
 		}

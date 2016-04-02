@@ -4,20 +4,28 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JSeparator;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
+import java.awt.Dimension;
+import net.miginfocom.swing.MigLayout;
+import store.ui.tables.BooksTable;
 
-public class MainFrame extends JFrame {
+import javax.swing.ImageIcon;
+
+public class MainFrame extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private BooksTable booksFrame;
 
 	/**
 	 * Launch the application.
@@ -41,13 +49,17 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setType(Type.UTILITY);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 366, 309);
+		setBounds(100, 100, 379, 397);
 		contentPane = new JPanel();
+		contentPane.setMinimumSize(new Dimension(640, 480));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
 		JButton viewBooksButton = new JButton("View Books");
-		
+		viewBooksButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) { openBooksFrame(); }
+		});
 		JButton viewReceiptsButton = new JButton("View Receipts");
 		
 		JButton viewCashiersButton = new JButton("View Cashiers");
@@ -55,50 +67,68 @@ public class MainFrame extends JFrame {
 		JButton revenueAndLossesButton = new JButton("Revenue and Losses");
 		
 		JSeparator separator = new JSeparator();
+		contentPane.setLayout(new MigLayout("", "[pref!][pref!,fill][200px]", "[300px][2px][62px][62px]"));
 		
-		JLabel lblNewLabel = new JLabel("BookStoreOne");
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("/home/marti/Desktop/java/NBU/ReceiptGenerator/res/LogoMainv2.jpg"));
 		lblNewLabel.setForeground(new Color(204, 0, 0));
 		lblNewLabel.setHorizontalTextPosition(SwingConstants.LEFT);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Chiller", Font.PLAIN, 52));
+		lblNewLabel.setFont(new Font("DejaVu Sans Light", Font.PLAIN, 35));
+		contentPane.add(lblNewLabel, "cell 0 0 3 1,alignx center,aligny center");
+		contentPane.add(separator, "cell 0 1 3 1,growx,aligny center");
+		contentPane.add(viewReceiptsButton, "cell 0 3,alignx left,growy");
+		contentPane.add(viewCashiersButton, "cell 2 3,grow");
+		contentPane.add(viewBooksButton, "cell 0 2,grow");
+		contentPane.add(revenueAndLossesButton, "cell 2 2,grow");
 		
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblNewLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-						.addComponent(separator, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(viewReceiptsButton, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-							.addComponent(viewCashiersButton, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(viewBooksButton, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-							.addComponent(revenueAndLossesButton, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
+		//addWindowListener(this);
+	}
+	
+	private void openBooksFrame() {
 		
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(revenueAndLossesButton, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-						.addComponent(viewBooksButton, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(viewReceiptsButton, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-						.addComponent(viewCashiersButton, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
-		);
+		booksFrame = new BooksTable(this);
+		booksFrame.setVisible(true);
+		setVisible(false);
 		
-		contentPane.setLayout(gl_contentPane);
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		setVisible(true);
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

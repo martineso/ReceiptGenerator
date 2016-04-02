@@ -40,7 +40,7 @@ public class StoreFileManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Book> loadBooksDatabase(File filePath) throws FileNotFoundException, IOException, ClassNotFoundException {
+	public static List<Book> loadBooksDatabase(File filePath) throws FileNotFoundException, IOException, ClassNotFoundException, UnsuccessfullOperationStoreException {
 		
 		if(filePath == null) {
 			return null;
@@ -54,11 +54,14 @@ public class StoreFileManager {
 			books = (List<Book>) in.readObject();
 			
 		}
-		
-		return books;
+		if(books != null) {
+			return books;
+		} else {
+			throw new UnsuccessfullOperationStoreException("Cannot read the books database!");
+		}
 	}
 	
-	public static List<Cashier> loadCashiersList(File filePath) throws FileNotFoundException, IOException {
+	public static List<Cashier> loadCashiersList(File filePath) throws FileNotFoundException, IOException, UnsuccessfullOperationStoreException {
 		
 		if(filePath == null) {
 			return null;
@@ -71,11 +74,13 @@ public class StoreFileManager {
 			
 			while(sc.hasNextLine()) {
 				
-				String[] tokens = sc.nextLine().split("^");
+				String line = sc.nextLine();
+				String[] tokens = line.split("[\\" + Cashier.fieldSeparator + "]");
 				String cashierName = tokens[0];
 				String cashierID = tokens[1];
 				
 				Cashier cashier = new Cashier(cashierName, cashierID);
+				
 				
 				if(cashier != null) {
 					
@@ -83,7 +88,12 @@ public class StoreFileManager {
 				}
 			}
 		}
-		return cashiers;
+		
+		if(!cashiers.isEmpty()) {
+			return cashiers;
+		} else {
+			throw new UnsuccessfullOperationStoreException();
+		}
 	}
 	
 	public static void saveCashiersList(List<Cashier> cashiers, File filePath) throws UnsuccessfullOperationStoreException, IOException {
@@ -96,7 +106,7 @@ public class StoreFileManager {
 			
 			for(Cashier cashier : cashiers) {
 				
-				String line = cashier.getName() + Cashier.fieldSeparator + cashier.getCashierId() + "\n";
+				String line = cashier.getName() + Cashier.fieldSeparator + cashier.getCashierId();
 				writer.println(line);
 				
 			}

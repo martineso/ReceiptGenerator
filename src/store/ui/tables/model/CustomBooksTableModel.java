@@ -59,9 +59,9 @@ public class CustomBooksTableModel extends AbstractTableModel {
 			
 	}
 	
-	public void setBooks(List<Book> books) {
+	public void setBooks(List<Book> list) {
 		
-		this.books = books;
+		this.books = list;
 		fireTableDataChanged();
 	}
 }
