@@ -161,7 +161,7 @@ public class BookStore implements Store {
 	public void generateReceipt() {
 
 		receiptsIssued.add(Receipt.generateReceipt(this, this.activeCashier, this.soldBooks));
-
+		
 	}
 
 	public void selectCashier(String name) throws CashierNotFoundException {
@@ -188,6 +188,7 @@ public class BookStore implements Store {
 		for(Receipt r : receiptsIssued) {
 
 			try {
+				
 				r.writeToFile();
 
 			} catch (IOException e) {

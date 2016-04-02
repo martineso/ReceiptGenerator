@@ -1,6 +1,7 @@
 package receipt.receiptgenerator;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +10,6 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.Collection;
 import java.util.UUID;
-
 import cashier.Cashier;
 import receipt.product.Sellable;
 import store.Store;
@@ -47,7 +47,7 @@ public class Receipt implements Serializable {
 		this.cashier = cashier;
 		this.soldProducts = soldProducts;
 		
-		this.receiptID = UUID.fromString(store.getName()).toString();
+		this.receiptID = UUID.randomUUID().toString();
 		this.issuedOn = new Date().toString();
 
 		generatedReceipts++;
@@ -55,6 +55,15 @@ public class Receipt implements Serializable {
 		
 	}
 	
+	/* Utility methods
+	 * for internal use only!
+	 */
+	
+	private String generateWindowsFriendlyDate(String date) {
+		
+		return date.replaceAll("(\\:)+", "-");
+		
+	}
 	/**
 	 * Calculates the total price of the item based
 	 * on how many items are sold and the value of each product
@@ -77,9 +86,6 @@ public class Receipt implements Serializable {
 		return total;
 	}
 	
-	/* Utility methods
-	 * for internal use only!
-	 */
 	
 	private String whitespacePaddedProductPrice(double price) {
 		
@@ -209,15 +215,16 @@ public class Receipt implements Serializable {
 	
 	public void writeToFile() throws IOException {
 		
+		File filePath = new File("res" + File.separator + "receipt-" + generateWindowsFriendlyDate(this.issuedOn) + ".txt");
 		
 		try(Scanner sc = new Scanner(generateReceiptAsString());
-				FileWriter fileWriter = new FileWriter("res/receipt-" + this.issuedOn + ".txt");
+				FileWriter fileWriter = new FileWriter(filePath);
 				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 				PrintWriter writer = new PrintWriter(bufferedWriter)) {
 			
 			while(sc.hasNextLine()) {
 				
-				writer.write(sc.nextLine() + "\n");
+				writer.println(sc.nextLine());
 				
 			}				
 		}
