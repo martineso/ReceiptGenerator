@@ -7,10 +7,17 @@ public class Cashier {
 	private String cashierID; 
 	private String name;
 	
-	public Cashier(String name) {
+	public static final String fieldSeparator = "^";
+	
+	public Cashier(String name, String cashierID) {
 		
 		this.name = name;
-		this.cashierID = UUID.randomUUID().toString();
+		
+		if(cashierID != null && cashierID.length() > 0){
+			this.cashierID = cashierID;
+		} else {
+				this.cashierID = UUID.randomUUID().toString();
+		}
 		
 	}
 	

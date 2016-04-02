@@ -71,7 +71,12 @@ public class StoreFileManager {
 			
 			while(sc.hasNextLine()) {
 				
-				Cashier cashier = new Cashier(sc.nextLine());
+				String[] tokens = sc.nextLine().split("^");
+				String cashierName = tokens[0];
+				String cashierID = tokens[1];
+				
+				Cashier cashier = new Cashier(cashierName, cashierID);
+				
 				if(cashier != null) {
 					
 					cashiers.add(cashier);
@@ -91,11 +96,13 @@ public class StoreFileManager {
 			
 			for(Cashier cashier : cashiers) {
 				
-				writer.println(cashier.getName());
+				String line = cashier.getName() + Cashier.fieldSeparator + cashier.getCashierId() + "\n";
+				writer.println(line);
 				
 			}
 		}
  	}
+	
 	
 }
 

@@ -14,11 +14,9 @@ public interface Store {
 	Product getProduct(String name);
 	
 	
-<<<<<<< HEAD
+
 	int getNumberOfReceiptsIssued();
-=======
 	int getReceiptsIssued();
->>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 	void generateReceipt(); 
 	Collection<? extends Product> getProductsList();
 	Collection<Cashier> getCashierList();

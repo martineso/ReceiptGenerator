@@ -1,9 +1,6 @@
 package receipt.demo;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-
 import cashier.Cashier;
 import receipt.product.Book;
 import receipt.product.Product;
@@ -15,11 +12,10 @@ import store.exceptions.UnsuccessfullOperationStoreException;
 
 public class ReceiptGeneratorDemo {
 	
-	static String date = new Date().toString();
-	static Book b1 = new Book("Slaughterhouse 5", "Vonnegut", "Aurora", date, 35, 25.53, true);
-	static Book b2 = new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", 3453, 15.50, true);
-	static Book b3 = new Book("Oliver Twist", "Dickens", "Aurora", date, 2, 0.50, true);
-	static Cashier Ivan = new Cashier("Ivan");
+	static Book b1 = new Book("Slaughterhouse 5", "Vonnegut", "Aurora", "20/07/1992", "id1", 35, 25.53, true);
+	static Book b2 = new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", "id2", 3453, 15.50, true);
+	static Book b3 = new Book("Oliver Twist", "Dickens", "Aurora", "13/12/1968", "id3", 2, 0.50, true);
+	static Cashier Ivan = new Cashier("Ivan", "id");
 	
 	public static void main(String[] args) {
 		
@@ -27,10 +23,8 @@ public class ReceiptGeneratorDemo {
 		
 		ArrayList<Book> books = new ArrayList<>();
 		books.add(b1);
-<<<<<<< HEAD
-		books.add(new Book("Slaughterhouse 5", "Vonnegut", "Aurora", date, 35, 25.53, true));
-		books.add(new Book("Of Mice and Men", "Steinbeck", "Peguin", "25/03/2013", 3453, 15.50, true));
-		books.add(new Book("Oliver Twist", "Dickens", "Aurora", date, 2, 0.50, true));
+		books.add(b2);
+		books.add(b3);
 		
 		ArrayList<SoldProduct> soldProductsTemp = new ArrayList<>();
 		
@@ -39,10 +33,10 @@ public class ReceiptGeneratorDemo {
 			soldProductsTemp.add(new SoldProduct(p, 4));
 		}
 		
-		Cashier Ivan = new Cashier("Ivan");
+		Cashier Ivan = new Cashier("Ivan", "id");
 		BookStoreOne.addCashier(Ivan);
 
-		BookStoreOne.addNewStock(b);
+		BookStoreOne.addNewStock(b1);
 		BookStoreOne.addNewStock(b1);
 		
 		@SuppressWarnings("unchecked")
@@ -53,7 +47,7 @@ public class ReceiptGeneratorDemo {
 		
 		try {
 			
-			BookStoreOne.sell(b, 35);
+			BookStoreOne.sell(b1, 35);
 			BookStoreOne.generateReceipt();
 			BookStoreOne.writeReceiptsToFile();
 			BookStoreOne.getNumberOfReceiptsIssued();
@@ -70,11 +64,11 @@ public class ReceiptGeneratorDemo {
 		
 		System.out.println("Quantity of item after being sold: " + bookstoresbooks.get(0).getQuantity());
 		System.out.println("Revenue generated: " + BookStoreOne.getRevenue());
-=======
+
 		books.add(b2);
 		books.add(b3);
 		
->>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
+
 		
 		
 	}

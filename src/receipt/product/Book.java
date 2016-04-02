@@ -5,14 +5,11 @@ import java.util.UUID;
 import receipt.product.exceptions.OutOfStockProductException;
 
 public class Book implements Product, Serializable {
-<<<<<<< HEAD
+
 	
 	public static final int FIELDS_COUNT = 7;
-	
 	private static final long serialVersionUID = 1L;
-=======
 
->>>>>>> 4b4507b76882164d4aeaacc7d3f454747a71ffc3
 	private String name, author, publisher;
 	private String issueDate;
 	private int copies;
@@ -21,9 +18,7 @@ public class Book implements Product, Serializable {
 	private String bookID;
 
 	
-	public Book(String name, String author, String publisher, String issueDate, int copies, double price, boolean isForeign) {
-		
-		this.bookID = UUID.randomUUID().toString();
+	public Book(String name, String author, String publisher, String issueDate, String bookID, int copies, double price, boolean isForeign) {
 		
 		this.name = name;
 		this.author = author;
@@ -32,6 +27,12 @@ public class Book implements Product, Serializable {
 		this.copies = copies;
 		this.price = price;
 		this.isForeign = isForeign;
+		
+		if(bookID != null && bookID.length() != 0) {
+			this.bookID = bookID;
+		} else {
+			this.bookID = UUID.randomUUID().toString();
+		}
 
 	}
 	
