@@ -33,10 +33,11 @@ public class CustomBooksTableModel extends AbstractTableModel {
 		case 3: return book.getPublisher();
 		case 4: return (book.isForeign() ? "Yes" : "No");
 		case 5: return book.getQuantity() + "";
-		case 6: return (book.getPrice() + "");
+		case 6: return String.format("%.2f", book.getPrice());
 		case 7: return book.getId();
 		
 		}
+		
 		return null;
 	}
 	
@@ -59,9 +60,10 @@ public class CustomBooksTableModel extends AbstractTableModel {
 			
 	}
 	
-	public void setBooks(List<Book> list) {
+	@SuppressWarnings("unchecked")
+	public void setBooks(List<? extends Product> list) {
 		
-		this.books = list;
+		this.books = (List<Book>) list;
 		fireTableDataChanged();
 	}
 }

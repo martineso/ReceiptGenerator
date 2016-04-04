@@ -17,6 +17,9 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Dimension;
 import net.miginfocom.swing.MigLayout;
+import store.BookStore;
+import receipt.product.Product;
+import java.util.List;
 import store.ui.tables.BooksTable;
 
 import javax.swing.ImageIcon;
@@ -26,6 +29,7 @@ public class MainFrame extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private BooksTable booksFrame;
+	private BookStore bookStore;
 
 	/**
 	 * Launch the application.
@@ -47,7 +51,9 @@ public class MainFrame extends JFrame implements WindowListener {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		
 		setType(Type.UTILITY);
+		setTitle("Book Store");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 379, 397);
 		contentPane = new JPanel();
@@ -55,14 +61,16 @@ public class MainFrame extends JFrame implements WindowListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
+		bookStore = new BookStore("BookStoreOne", "Buxton, 49");
+		
 		JButton viewBooksButton = new JButton("View Books");
 		viewBooksButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) { openBooksFrame(); }
 		});
-		JButton viewReceiptsButton = new JButton("View Receipts");
-		
 		JButton viewCashiersButton = new JButton("View Cashiers");
+		
+		JButton viewReceiptsButton = new JButton("View Receipts");
 		
 		JButton revenueAndLossesButton = new JButton("Revenue and Losses");
 		
@@ -77,12 +85,11 @@ public class MainFrame extends JFrame implements WindowListener {
 		lblNewLabel.setFont(new Font("DejaVu Sans Light", Font.PLAIN, 35));
 		contentPane.add(lblNewLabel, "cell 0 0 3 1,alignx center,aligny center");
 		contentPane.add(separator, "cell 0 1 3 1,growx,aligny center");
-		contentPane.add(viewReceiptsButton, "cell 0 3,alignx left,growy");
-		contentPane.add(viewCashiersButton, "cell 2 3,grow");
+		contentPane.add(viewCashiersButton, "cell 0 3,alignx left,growy");
+		contentPane.add(viewReceiptsButton, "cell 2 3,grow");
 		contentPane.add(viewBooksButton, "cell 0 2,grow");
 		contentPane.add(revenueAndLossesButton, "cell 2 2,grow");
 		
-		//addWindowListener(this);
 	}
 	
 	private void openBooksFrame() {
@@ -91,6 +98,14 @@ public class MainFrame extends JFrame implements WindowListener {
 		booksFrame.setVisible(true);
 		setVisible(false);
 		
+	}
+	
+	protected List<? extends Product> getStoreProductsList() {
+		return bookStore.getProductsList();
+	}
+	
+	public BookStore getStore() {
+		return this.bookStore;
 	}
 
 	@Override

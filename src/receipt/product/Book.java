@@ -8,6 +8,7 @@ public class Book implements Product, Serializable {
 
 	
 	public static final int FIELDS_COUNT = 8;
+	public static final String FIELD_SEPARATOR = "^";
 	private static final long serialVersionUID = 1L;
 
 	private String name, author, publisher;
@@ -17,7 +18,6 @@ public class Book implements Product, Serializable {
 	private boolean isForeign;
 	private String bookID;
 
-	
 	public Book(String name, String author, String publisher, String issueDate, String bookID, int copies, double price, boolean isForeign) {
 		
 		this.name = name;
@@ -99,7 +99,7 @@ public class Book implements Product, Serializable {
 	@Override
 	public void decreaseQuantity(int quantity) throws OutOfStockProductException {
 		
-		if(quantity > this.copies) {
+		if(quantity > this.copies || quantity <= 0) {
 			
 			throw new OutOfStockProductException("Out of stock, check storage!");
 			
@@ -174,42 +174,5 @@ public class Book implements Product, Serializable {
 			return false;
 		return true;
 	}
-
-	/*@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Book other = (Book) obj;
-		if (author == null) {
-			if (other.author != null)
-				return false;
-		} else if (!author.equals(other.author))
-			return false;
-		if (isForeign != other.isForeign)
-			return false;
-		if (issueDate == null) {
-			if (other.issueDate != null)
-				return false;
-		} else if (!issueDate.equals(other.issueDate))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
-			return false;
-		if (publisher == null) {
-			if (other.publisher != null)
-				return false;
-		} else if (!publisher.equals(other.publisher))
-			return false;
-		return true;
-	}*/
-	
 
 }

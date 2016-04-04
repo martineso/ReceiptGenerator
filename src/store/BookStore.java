@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cashier.Cashier;
 import receipt.product.Book;
 import receipt.product.Product;
@@ -74,10 +77,9 @@ public class BookStore implements Store {
 
 	}
 
-	@Override
-	public List<? extends Product> getProductsList() {
+	public List<Book> getProductsList() {
 
-		return this.books;
+		return books;
 
 	}
 
@@ -152,7 +154,7 @@ public class BookStore implements Store {
 	}
 
 	@Override
-	public void addCashier(Cashier cashier) throws UnsuccessfullOperationStoreException {
+	public void addCashier(Cashier cashier) {
 		
 		if(cashiers.isEmpty()) {
 			cashiers.add(cashier);
@@ -163,9 +165,7 @@ public class BookStore implements Store {
 
 			cashiers.add(cashier);
 
-		} else {
-			throw new UnsuccessfullOperationStoreException("Unable to add cashier!");
-		};
+		}
 
 	}
 
@@ -249,6 +249,24 @@ public class BookStore implements Store {
 		} 
 
 		return null;
+	}
+	
+	public List<Book> find(String keyword) {
+		
+		List<Book> searchResult = new ArrayList<>();
+		
+		String regex = "(" + keyword.toLowerCase() + ")+"; 
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher;
+		for(Book book : books) {
+			String bookName = book.getName().toLowerCase();
+			matcher = pattern.matcher(bookName);
+			
+			if(matcher.find()) {
+				searchResult.add(book);
+			}
+		}
+		return searchResult;
 	}
 
 	// Load and Save methods

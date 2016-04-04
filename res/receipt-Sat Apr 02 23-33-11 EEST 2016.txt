@@ -1,9 +1,0 @@
-BookStoreOne
-ID: 2cca97fc-5535-479b-9d9f-af7b8414c305
-Item                            Quantity     Price
------
-Slaughterhouse 5                     3 x     25.53
------
-Total:                                       76.59
-Your cashier: Viktor
-Sat Apr 02 23:33:11 EEST 2016

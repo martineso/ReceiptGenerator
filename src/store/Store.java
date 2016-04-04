@@ -17,7 +17,6 @@ public interface Store {
 
 	int getNumberOfReceiptsIssued();
 	void generateReceipt(); 
-	List<? extends Product> getProductsList();
 	List<Cashier> getCashierList();
 	
 	void sell(Product product, int quantity) throws OutOfStockProductException;

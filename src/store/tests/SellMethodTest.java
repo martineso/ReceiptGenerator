@@ -19,11 +19,7 @@ public class SellMethodTest {
 		
 		BookStore BookStoreOne = new BookStore("BookStoreOne", "Buxton blvd. 708, Sofia");
 		
-		try {
-			BookStoreOne.addCashier(Viktor);
-		} catch (UnsuccessfullOperationStoreException e2) {
-			e2.printStackTrace();
-		}
+		BookStoreOne.addCashier(Viktor);
 		
 		try {
 			BookStoreOne.selectCashier("Viktor");
@@ -35,7 +31,7 @@ public class SellMethodTest {
 		books.add(b2);
 		books.add(b3);
 		
-		/*try {
+		try {
 			BookStoreOne.deleteProduct("Slaughterhouse 5");
 		} catch (UnsuccessfullOperationStoreException e1) {
 			e1.printStackTrace();
@@ -46,13 +42,9 @@ public class SellMethodTest {
 		} catch (UnsuccessfullOperationStoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}*/
+		}
 		
-		BookStoreOne.addNewStock(b1);
-		BookStoreOne.addNewStock(b2);
-		BookStoreOne.addNewStock(b3);
-		
-		try {
+		/*try {
 			
 			BookStoreOne.sell(b1, 3);
 			//BookStoreOne.sell(b1, 354);
@@ -64,7 +56,7 @@ public class SellMethodTest {
 			System.err.println(e.getMessage());
 		} catch (UnsuccessfullOperationStoreException e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 		
 		try {
 			

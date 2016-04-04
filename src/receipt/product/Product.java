@@ -9,6 +9,7 @@ public interface Product {
 	double getPrice();
 	int getQuantity();
 	
+	void setQuantity(int quantity);
 	void decreaseQuantity(int quantity) throws OutOfStockProductException;
 	void increaseQuantity(int quantity);
 }
