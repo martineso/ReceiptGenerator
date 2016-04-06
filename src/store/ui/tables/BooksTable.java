@@ -1,15 +1,17 @@
 package store.ui.tables;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -18,12 +20,13 @@ import receipt.product.Book;
 import receipt.product.Product;
 import receipt.product.exceptions.OutOfStockProductException;
 import store.BookStore;
+import store.exceptions.UnsuccessfullOperationStoreException;
+import store.ui.main.AddBookWindow;
 import store.ui.main.MainFrame;
+import store.ui.main.ReceiptWindow;
 import store.ui.tables.model.CustomBooksTableModel;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import javax.swing.JSeparator;
 
 
@@ -55,7 +58,7 @@ public class BooksTable extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[grow][][][fill][][][][][grow][][][][]", "[][][grow][grow][][][][][][][][][]"));
+		contentPane.setLayout(new MigLayout("", "[grow][][][fill][][][][][][][][][]", "[][][grow][grow][][][][][][][][][]"));
 	
 		// Initialize the bookstore and add the parent window listener
 		// in order to manage the focus of each window
@@ -101,6 +104,15 @@ public class BooksTable extends JFrame {
 		contentPane.add(scrollPane, "cell 0 2 9 6,grow");
 		
 		table = new JTable();
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				updateSellButton();
+				updateDeleteButton();
+			}
+		});
+		
 		tableModel = new CustomBooksTableModel();
 		tableModel.setBooks(bookStore.getProductsList());
 		table.setModel(tableModel);
@@ -115,6 +127,7 @@ public class BooksTable extends JFrame {
 		contentPane.add(btnSell, "cell 0 8 1 4,grow");
 		
 		btnViewReceipt = new JButton("View Receipt");
+		btnViewReceipt.setEnabled(false);
 		btnViewReceipt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) { viewReceipt(); }
@@ -132,39 +145,65 @@ public class BooksTable extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) { newBook(); }
 		});
-		contentPane.add(btnNew, "cell 3 9,alignx center,growy");
-		contentPane.add(btnDelete, "cell 4 9,grow");
+		contentPane.add(btnNew, "cell 3 8 1 2,alignx center,growy");
+		contentPane.add(btnDelete, "cell 4 8 1 2,grow");
 		
 		updateSearchButton();
+		updateSellButton();
+		updateDeleteButton();
 		
 	}
 
 	private void newBook() {
-		// TODO Auto-generated method stub
+		AddBookWindow addBook = new AddBookWindow();
+		addBook.setModalityType(ModalityType.APPLICATION_MODAL);
+		addBook.setVisible(true);
+		
+		Book book = addBook.getBook();
+		
+		if(book != null) {
+			bookStore.addNewStock(book);
+		} else {
+			JOptionPane.showMessageDialog(this, "Unable to add book, try again!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 		
 	}
 
 	private void deleteBook() {
-		// TODO Auto-generated method stub
+		
+		int selectedRow = table.getSelectionModel().getMinSelectionIndex();
+		
+		if(selectedRow != -1) {
+			String bookName = tempBookList.get(selectedRow).getName();
+			try {
+				bookStore.deleteProduct(bookName);
+			} catch (UnsuccessfullOperationStoreException e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
 		
 	}
 
 	private void viewReceipt() {
 		
-		
+		ReceiptWindow rWindow = new ReceiptWindow(this.bookStore);
+		rWindow.setVisible(true);
+		btnViewReceipt.setEnabled(false);
 	}
 
 	private void sell() {
 		
-		int selection = table.getSelectionModel().getMinSelectionIndex();
+		int selectedRow = table.getSelectionModel().getMinSelectionIndex();
 		
-		if(selection != -1) {
+		if(selectedRow != -1) {
 			int quantity = getQuantityFromInput();
-			Product product = tempBookList.get(selection);
+			Product product = tempBookList.get(selectedRow);
 			try {
 			
 				bookStore.sell(product, quantity);
-				tableModel.fireTableRowsUpdated(selection, selection);
+				tableModel.fireTableRowsUpdated(selectedRow, selectedRow);
+				btnViewReceipt.setEnabled(true);
 			
 			} catch (OutOfStockProductException e) {
 				JOptionPane.showMessageDialog(this, "Invalid quantity, try again", "Error", JOptionPane.ERROR_MESSAGE);
@@ -189,16 +228,30 @@ public class BooksTable extends JFrame {
 		return Integer.valueOf(valueString);
 	}
 	
+	// Button listeners ---------------
+	
 	private void updateSearchButton() {
 		
 		Document doc = searchField.getDocument();
 		int len = doc.getLength();
 		if(len < 3) {
+			
 			tableModel.setBooks(bookStore.getProductsList());
 			btnSearch.setEnabled(false);
+			
 		} else {
 			btnSearch.setEnabled(true);
 		}	
+	}
+	
+	private void updateSellButton() {
+		int selectedRow = table.getSelectedRow();
+		btnSell.setEnabled(selectedRow != -1);
+	}
+	
+	private void updateDeleteButton() {
+		int selectedRow = table.getSelectedRow();
+		btnDelete.setEnabled(selectedRow != -1);
 	}
 	
 }

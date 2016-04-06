@@ -7,22 +7,21 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import javax.swing.SwingConstants;
-import java.awt.Color;
-import java.awt.Dimension;
 import net.miginfocom.swing.MigLayout;
 import store.BookStore;
+import store.exceptions.CashierNotFoundException;
+import store.exceptions.UnsuccessfullOperationStoreException;
 import receipt.product.Product;
 import java.util.List;
 import store.ui.tables.BooksTable;
 
 import javax.swing.ImageIcon;
+import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame implements WindowListener {
 
@@ -53,21 +52,27 @@ public class MainFrame extends JFrame implements WindowListener {
 	public MainFrame() {
 		
 		setType(Type.UTILITY);
-		setTitle("Book Store");
+		setTitle("BookStoreOne");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 379, 397);
 		contentPane = new JPanel();
-		contentPane.setMinimumSize(new Dimension(640, 480));
+//		contentPane.setMinimumSize(new Dimension(640, 480));
+		contentPane.getPreferredSize();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
 		bookStore = new BookStore("BookStoreOne", "Buxton, 49");
+		try {
+			bookStore.selectCashier("Viktor");
+		} catch (CashierNotFoundException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 		
 		JButton viewBooksButton = new JButton("View Books");
 		viewBooksButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) { openBooksFrame(); }
 		});
+		
 		JButton viewCashiersButton = new JButton("View Cashiers");
 		
 		JButton viewReceiptsButton = new JButton("View Receipts");
@@ -75,20 +80,26 @@ public class MainFrame extends JFrame implements WindowListener {
 		JButton revenueAndLossesButton = new JButton("Revenue and Losses");
 		
 		JSeparator separator = new JSeparator();
-		contentPane.setLayout(new MigLayout("", "[pref!][pref!,fill][200px]", "[300px][2px][62px][62px]"));
+		contentPane.setLayout(new MigLayout("", "[pref!][200px]", "[300px][2px][62px][62px]"));
+		
+		JPanel logoBorderPanel = new JPanel();
+		logoBorderPanel.setName("");
+		logoBorderPanel.setToolTipText("\n");
+		logoBorderPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		contentPane.add(logoBorderPanel, "cell 0 0 2 1,grow");
+		logoBorderPanel.setLayout(new MigLayout("", "[pref!][pref!,fill][200px]", "[300px]"));
 		
 		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon("/home/marti/Desktop/java/NBU/ReceiptGenerator/res/LogoMainv2.jpg"));
-		lblNewLabel.setForeground(new Color(204, 0, 0));
-		lblNewLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("DejaVu Sans Light", Font.PLAIN, 35));
-		contentPane.add(lblNewLabel, "cell 0 0 3 1,alignx center,aligny center");
-		contentPane.add(separator, "cell 0 1 3 1,growx,aligny center");
+		lblNewLabel.setOpaque(true);
+		logoBorderPanel.add(lblNewLabel, "cell 0 0 3 1,alignx center,aligny center");
+		lblNewLabel.setIcon(new ImageIcon("res/LogoMainv2.jpg"));
+		contentPane.add(separator, "cell 0 1 2 1,growx,aligny center");
 		contentPane.add(viewCashiersButton, "cell 0 3,alignx left,growy");
-		contentPane.add(viewReceiptsButton, "cell 2 3,grow");
+		contentPane.add(viewReceiptsButton, "cell 1 3,grow");
 		contentPane.add(viewBooksButton, "cell 0 2,grow");
-		contentPane.add(revenueAndLossesButton, "cell 2 2,grow");
+		contentPane.add(revenueAndLossesButton, "cell 1 2,grow");
+		
+		pack();
 		
 	}
 	
@@ -96,7 +107,6 @@ public class MainFrame extends JFrame implements WindowListener {
 		
 		booksFrame = new BooksTable(this);
 		booksFrame.setVisible(true);
-		setVisible(false);
 		
 	}
 	
@@ -110,17 +120,28 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
+		setVisible(false);
 		
 	}
 
 	@Override
+	public void windowClosing(WindowEvent e) {
+		e.getComponent().setVisible(false);
+	}
+
+	@Override
 	public void windowClosed(WindowEvent e) {
-		setVisible(true);
+		// Only show this window if the closed one is
+		// the BooksTable frame
+		if(e.getComponent() instanceof BooksTable) {
+			setVisible(true);
+			try {
+				bookStore.saveDatabase();
+			} catch (UnsuccessfullOperationStoreException e1) {
+				JOptionPane.showMessageDialog(this, "Changes are not saved!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
 		
 	}
 
@@ -137,8 +158,7 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	@Override

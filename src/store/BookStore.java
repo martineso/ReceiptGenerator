@@ -26,6 +26,7 @@ public class BookStore implements Store {
 	private Cashier activeCashier;
 	private List<Book> books;
 	private List<SoldProduct> soldBooks;
+	private Receipt lastReceipt;
 	private List<Receipt> receiptsIssued;
 	
 	private static double generatedRevenue = 0;
@@ -172,8 +173,14 @@ public class BookStore implements Store {
 	@Override
 	public void generateReceipt() {
 
-		receiptsIssued.add(Receipt.generateReceipt(this, this.activeCashier, this.soldBooks));
+		lastReceipt = Receipt.generateReceipt(this, this.activeCashier, this.soldBooks);
+		receiptsIssued.add(lastReceipt);
+		this.soldBooks.clear();
 		generatedReceipts++;
+	}
+	
+	public Receipt getLastReceipt() {
+		return lastReceipt;
 	}
 
 	public void selectCashier(String name) throws CashierNotFoundException {
@@ -186,25 +193,43 @@ public class BookStore implements Store {
 				return;
 
 			} else {
-
-				throw new CashierNotFoundException();
+				// Selects the first cashier in the list of cashiers instead
+				this.activeCashier = cashiers.get(0);
+				
+				throw new CashierNotFoundException("The cashier is not found. Default cashier selected: " + activeCashier.getName());
 
 			}
 
 		}
 
 	}
+	
+	public void writeLastReceiptToFile() throws UnsuccessfullOperationStoreException {
+		
+		File directory = new File("res");
+		
+		try {
+			lastReceipt.writeToFile(directory);
+		} catch(IOException e) {
+			throw new UnsuccessfullOperationStoreException("Cannot write receipt to file!");
+		}
+	}
 
 	public void writeReceiptsToFile() throws UnsuccessfullOperationStoreException {
+		
+		// Create a directory and pass it as argument to the receipt. 
 
+		File directory = new File("res" + File.separator + getName() + "-receipts");
+		directory.mkdirs();
+		
 		for(Receipt r : receiptsIssued) {
 
 			try {
 				
-				r.writeToFile();
+				r.writeToFile(directory);
 
 			} catch (IOException e) {
-				throw new UnsuccessfullOperationStoreException("Cannot write receipt to file!");
+				throw new UnsuccessfullOperationStoreException("Cannot write receipts to file!");
 			}
 
 		}

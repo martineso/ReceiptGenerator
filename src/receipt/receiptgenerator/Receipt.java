@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import cashier.Cashier;
@@ -23,7 +25,7 @@ public class Receipt implements Serializable {
 	private static final int PRODUCT_QUANTITY_LENGTH = 10;
 	private static final int PRODUCT_PRICE_LENGTH = 10;
 	
-	private Collection<? extends Sellable> soldProducts;
+	private List<? extends Sellable> soldProducts;
 	private String receiptID; 
 	private String issuedOn;
 	private Cashier cashier;
@@ -45,7 +47,7 @@ public class Receipt implements Serializable {
 		
 		this.store = store;
 		this.cashier = cashier;
-		this.soldProducts = soldProducts;
+		this.soldProducts = new ArrayList<>(soldProducts);
 		
 		this.receiptID = UUID.randomUUID().toString();
 		this.issuedOn = new Date().toString();
@@ -181,7 +183,7 @@ public class Receipt implements Serializable {
 		return Receipt.generatedReceipts;
 	}
 	
-	private String generateReceiptAsString() {
+	public String generateReceiptAsString() {
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -213,9 +215,14 @@ public class Receipt implements Serializable {
 		
 	}
 	
-	public void writeToFile() throws IOException {
+	public void writeToFile(File directory) throws IOException {
 		
-		File filePath = new File("res" + File.separator + "receipt-" + generateWindowsFriendlyDate(this.issuedOn) + ".txt");
+		if(!directory.exists()) {
+			throw new IOException("Invalid directory");
+		}
+		
+		String receiptName = generateWindowsFriendlyDate(this.issuedOn) + ".txt";
+		File filePath = new File(directory + File.separator + receiptName);
 		
 		try(Scanner sc = new Scanner(generateReceiptAsString());
 				FileWriter fileWriter = new FileWriter(filePath);

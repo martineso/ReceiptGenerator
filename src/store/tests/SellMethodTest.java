@@ -1,12 +1,16 @@
 package store.tests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import cashier.Cashier;
 import receipt.product.Book;
 import receipt.product.exceptions.OutOfStockProductException;
+import receipt.receiptgenerator.Receipt;
 import store.BookStore;
 import store.exceptions.CashierNotFoundException;
 import store.exceptions.UnsuccessfullOperationStoreException;
+import store.ui.main.ReceiptWindow;
 
 public class SellMethodTest {
 
@@ -31,41 +35,26 @@ public class SellMethodTest {
 		books.add(b2);
 		books.add(b3);
 		
-		try {
-			BookStoreOne.deleteProduct("Slaughterhouse 5");
-		} catch (UnsuccessfullOperationStoreException e1) {
-			e1.printStackTrace();
+		for(Book book : BookStoreOne.getProductsList()) {
+			System.out.println(book);
 		}
 		
-		try {
-			BookStoreOne.deleteProduct("Of Mice And Men");
-		} catch (UnsuccessfullOperationStoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		/*try {
-			
-			BookStoreOne.sell(b1, 3);
-			//BookStoreOne.sell(b1, 354);
+		ReceiptWindow r = new ReceiptWindow(BookStoreOne);
+		r.setVisible(true);
+/*		try {
+			BookStoreOne.sell(BookStoreOne.getProduct("Oliver Twist"), 1);
 			BookStoreOne.generateReceipt();
-			BookStoreOne.writeReceiptsToFile();
-			
-		} catch (OutOfStockProductException e) {
-			
-			System.err.println(e.getMessage());
-		} catch (UnsuccessfullOperationStoreException e) {
-			System.err.println(e.getMessage());
-		}*/
+		} catch(OutOfStockProductException e) {
+			e.printStackTrace();
+		}
 		
 		try {
-			
-			BookStoreOne.saveDatabase();
-			BookStoreOne.saveCashiersList();
-
-		} catch(UnsuccessfullOperationStoreException e) {
-			System.err.println("error: " + e.getMessage());
+			BookStoreOne.writeLastReceiptToFile();
+		} catch (UnsuccessfullOperationStoreException e) {
+			e.printStackTrace();
 		}
+		String receipt = BookStoreOne.getLastReceipt().generateReceiptAsString();
+		System.out.println(receipt);*/
 
 	}
 }
