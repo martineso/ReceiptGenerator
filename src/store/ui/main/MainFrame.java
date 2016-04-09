@@ -3,7 +3,6 @@ package store.ui.main;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JLabel;
@@ -12,23 +11,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import net.miginfocom.swing.MigLayout;
 import store.BookStore;
 import store.exceptions.CashierNotFoundException;
 import store.exceptions.UnsuccessfullOperationStoreException;
-import receipt.product.Product;
-import java.util.List;
 import store.ui.tables.BooksTable;
-
 import javax.swing.ImageIcon;
-import javax.swing.border.EtchedBorder;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class MainFrame extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private BooksTable booksFrame;
 	private BookStore bookStore;
+	private JPanel contentPane;
+	private JButton btnViewBooks;
+	private JButton btnViewCashiers;
+	private JButton btnService;
+	private JButton btnRevenueAndLosses;
 
 	/**
 	 * Launch the application.
@@ -55,73 +55,130 @@ public class MainFrame extends JFrame implements WindowListener {
 		setTitle("BookStoreOne");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		contentPane = new JPanel();
-//		contentPane.setMinimumSize(new Dimension(640, 480));
-		contentPane.getPreferredSize();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{0, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		contentPane.setLayout(gbl_contentPane);
 		
-		bookStore = new BookStore("BookStoreOne", "Buxton, 49");
+		JLabel lblMainLogo = new JLabel("");
+		lblMainLogo.setIcon(new ImageIcon("C:\\Users\\Geni\\workspace\\NBU\\ReceiptGenerator\\res\\BookStoreOneLogo.png"));
+		GridBagConstraints gbc_lblMainLogo = new GridBagConstraints();
+		gbc_lblMainLogo.gridheight = 5;
+		gbc_lblMainLogo.insets = new Insets(0, 0, 5, 0);
+		gbc_lblMainLogo.gridx = 0;
+		gbc_lblMainLogo.gridy = 1;
+		contentPane.add(lblMainLogo, gbc_lblMainLogo);
+		
+		JSeparator separator = new JSeparator();
+		GridBagConstraints gbc_separator = new GridBagConstraints();
+		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+		gbc_separator.insets = new Insets(0, 0, 5, 0);
+		gbc_separator.gridx = 0;
+		gbc_separator.gridy = 6;
+		contentPane.add(separator, gbc_separator);
+		
+		JPanel panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.gridheight = 2;
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 0;
+		gbc_panel.gridy = 7;
+		contentPane.add(panel, gbc_panel);
+		
+		btnViewBooks = new JButton("View Books");
+		btnViewBooks.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openBooksFrame();
+			}
+		});
+		panel.add(btnViewBooks);
+		
+		btnViewCashiers = new JButton("View Cashiers");
+		btnViewCashiers.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openCashiersFrame();
+			}
+		});
+		panel.add(btnViewCashiers);
+		
+		btnService = new JButton("Service");
+		btnService.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openServiceFrame();
+				
+			}
+		});
+		panel.add(btnService);
+		
+		btnRevenueAndLosses = new JButton("Revenue and Losses");
+		btnRevenueAndLosses.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openRevenueAndLossesFrame();
+				
+			}
+		});
+		panel.add(btnRevenueAndLosses);
+		
+		// Initialize the store
+		
+		bookStore = new BookStore("BookStoreOne", "Buxton blvd. 708, Sofia");
 		try {
 			bookStore.selectCashier("Viktor");
 		} catch (CashierNotFoundException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
-		JButton viewBooksButton = new JButton("View Books");
-		viewBooksButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) { openBooksFrame(); }
-		});
-		
-		JButton viewCashiersButton = new JButton("View Cashiers");
-		
-		JButton viewReceiptsButton = new JButton("View Receipts");
-		
-		JButton revenueAndLossesButton = new JButton("Revenue and Losses");
-		
-		JSeparator separator = new JSeparator();
-		contentPane.setLayout(new MigLayout("", "[pref!][200px]", "[300px][2px][62px][62px]"));
-		
-		JPanel logoBorderPanel = new JPanel();
-		logoBorderPanel.setName("");
-		logoBorderPanel.setToolTipText("\n");
-		logoBorderPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		contentPane.add(logoBorderPanel, "cell 0 0 2 1,grow");
-		logoBorderPanel.setLayout(new MigLayout("", "[pref!][pref!,fill][200px]", "[300px]"));
-		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setOpaque(true);
-		logoBorderPanel.add(lblNewLabel, "cell 0 0 3 1,alignx center,aligny center");
-		lblNewLabel.setIcon(new ImageIcon("res/LogoMainv2.jpg"));
-		contentPane.add(separator, "cell 0 1 2 1,growx,aligny center");
-		contentPane.add(viewCashiersButton, "cell 0 3,alignx left,growy");
-		contentPane.add(viewReceiptsButton, "cell 1 3,grow");
-		contentPane.add(viewBooksButton, "cell 0 2,grow");
-		contentPane.add(revenueAndLossesButton, "cell 1 2,grow");
-		
 		pack();
 		
 	}
 	
+	// Button actions ----------------------------------------
+	// -------------------------------------------------------
+	
 	private void openBooksFrame() {
 		
-		booksFrame = new BooksTable(this);
-		booksFrame.setVisible(true);
-		
+		BooksTable booksTable = new BooksTable(this);
+		booksTable.setVisible(true);
 	}
 	
-	protected List<? extends Product> getStoreProductsList() {
-		return bookStore.getProductsList();
+	private void openCashiersFrame() {
+		// TODO not yet implemented
+	}
+	
+	private void openServiceFrame() {
+		// TODO not yet implemented
+	}
+	
+	private void openRevenueAndLossesFrame() {
+		// TODO not yet implemented
 	}
 	
 	public BookStore getStore() {
 		return this.bookStore;
 	}
-
+	
+	
+	/*
+	 * Window Listener Interface methods implementation
+	 * For now the only useful methods are the WindowClosing(), 
+	 * WindowOpened(), and WindowClosed() methods. 
+	 * -------------------------------------------------------
+	*/
+	
 	@Override
 	public void windowOpened(WindowEvent e) {
 		setVisible(false);
-		
 	}
 
 	@Override
@@ -152,7 +209,6 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -163,7 +219,6 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 }

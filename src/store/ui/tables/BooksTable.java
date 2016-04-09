@@ -45,6 +45,8 @@ public class BooksTable extends JFrame {
 	private JTable table;
 	private JSeparator separator;
 	private BookStore bookStore;
+	
+	// Mainly used for the search interface so that the original store's product list is not affected
 	private List<Book> tempBookList;
 	
 	/**
@@ -60,11 +62,9 @@ public class BooksTable extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new MigLayout("", "[grow][][][fill][][][][][][][][][]", "[][][grow][grow][][][][][][][][][]"));
 	
-		// Initialize the bookstore and add the parent window listener
-		// in order to manage the focus of each window
+		// Get a reference to the Store from the main frame
 		bookStore = mainFrame.getStore();
 		tempBookList = bookStore.getProductsList();
-		addWindowListener(mainFrame);
 		
 		searchField = new JTextField();
 		contentPane.add(searchField, "cell 0 0 8 1,grow");
@@ -152,7 +152,12 @@ public class BooksTable extends JFrame {
 		updateSellButton();
 		updateDeleteButton();
 		
+		addWindowListener(mainFrame);
+		
 	}
+	
+	// Button actions -----------------
+	// --------------------------------
 
 	private void newBook() {
 		AddBookWindow addBook = new AddBookWindow();
@@ -222,13 +227,8 @@ public class BooksTable extends JFrame {
 		
 	}
 	
-	private int getQuantityFromInput() {
-		
-		String valueString = JOptionPane.showInputDialog("How many?", 1);
-		return Integer.valueOf(valueString);
-	}
-	
 	// Button listeners ---------------
+	// --------------------------------
 	
 	private void updateSearchButton() {
 		
@@ -252,6 +252,15 @@ public class BooksTable extends JFrame {
 	private void updateDeleteButton() {
 		int selectedRow = table.getSelectedRow();
 		btnDelete.setEnabled(selectedRow != -1);
+	}
+	
+	// Other utility methods ----------
+	// --------------------------------
+	
+	private int getQuantityFromInput() {
+		
+		String valueString = JOptionPane.showInputDialog("How many?", 1);
+		return Integer.valueOf(valueString);
 	}
 	
 }

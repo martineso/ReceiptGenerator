@@ -1,15 +1,10 @@
 package store.tests;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import cashier.Cashier;
 import receipt.product.Book;
-import receipt.product.exceptions.OutOfStockProductException;
-import receipt.receiptgenerator.Receipt;
 import store.BookStore;
 import store.exceptions.CashierNotFoundException;
-import store.exceptions.UnsuccessfullOperationStoreException;
 import store.ui.main.ReceiptWindow;
 
 public class SellMethodTest {

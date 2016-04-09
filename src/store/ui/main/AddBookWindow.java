@@ -32,7 +32,7 @@ public class AddBookWindow extends JDialog {
 	private JTextField priceTextField;
 	private JTextField dateTextField;
 	private JTextField quantityTextField;
-	private JComboBox isForeignComboBox;
+	private JComboBox<String> isForeignComboBox;
 	private JButton btnConfirm;
 	private JButton btnCancel;
 	private MyInputVerifier inputVerifier;
@@ -197,7 +197,7 @@ public class AddBookWindow extends JDialog {
 		contentPane.add(lblForeign, gbc_lblForeign);
 		
 		String[] options = {"Yes", "No"};
-		isForeignComboBox = new JComboBox(options);
+		isForeignComboBox = new JComboBox<String>(options);
 		GridBagConstraints gbc_isForeignComboBox = new GridBagConstraints();
 		gbc_isForeignComboBox.insets = new Insets(0, 0, 5, 0);
 		gbc_isForeignComboBox.anchor = GridBagConstraints.NORTH;
@@ -256,6 +256,10 @@ public class AddBookWindow extends JDialog {
 		double price = Double.valueOf(priceTextField.getText());
 		int copies = Integer.valueOf(quantityTextField.getText());
 		boolean isForeign = ((String) isForeignComboBox.getSelectedItem()).equals("Yes") ? true : false;
+		
+		// The field for the ID is left blank so that the Book object can generate a new unique ID
+		// May implement a method to check if the book by this author and issue date already exists
+		// so that there are no duplicate elements in the store
 		
 		this.book = new Book(title,author, publisher, issueDate, "", copies, price, isForeign);
 	}
