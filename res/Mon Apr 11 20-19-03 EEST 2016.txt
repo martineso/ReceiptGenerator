@@ -1,0 +1,9 @@
+BookStoreOne
+ID: 7ad39528-59d9-4864-8d6a-c616cb23e60f
+Item                            Quantity     Price
+-----
+1984                                20 x     14,52
+-----
+Total:                                      290,40
+Your cashier: Viktor
+Mon Apr 11 20:19:03 EEST 2016
