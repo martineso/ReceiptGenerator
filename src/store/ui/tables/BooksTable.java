@@ -67,6 +67,7 @@ public class BooksTable extends JFrame {
 		tempBookList = bookStore.getProductsList();
 		
 		searchField = new JTextField();
+		searchField.setToolTipText("Search");
 		contentPane.add(searchField, "cell 0 0 8 1,grow");
 		searchField.setColumns(10);
 		searchField.getDocument().addDocumentListener(new DocumentListener() {
@@ -168,6 +169,7 @@ public class BooksTable extends JFrame {
 		
 		if(book != null) {
 			bookStore.addNewStock(book);
+			tableModel.setBooks(bookStore.getProductsList());
 		} else {
 			JOptionPane.showMessageDialog(this, "Unable to add book, try again!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
@@ -182,6 +184,7 @@ public class BooksTable extends JFrame {
 			String bookName = tempBookList.get(selectedRow).getName();
 			try {
 				bookStore.deleteProduct(bookName);
+				tableModel.setBooks(bookStore.getProductsList());
 			} catch (UnsuccessfullOperationStoreException e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}

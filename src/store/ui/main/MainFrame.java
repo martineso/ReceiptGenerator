@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+
 import store.BookStore;
 import store.exceptions.CashierNotFoundException;
 import store.exceptions.UnsuccessfullOperationStoreException;
@@ -64,7 +66,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		contentPane.setLayout(gbl_contentPane);
 		
 		JLabel lblMainLogo = new JLabel("");
-		lblMainLogo.setIcon(new ImageIcon("C:\\Users\\Geni\\workspace\\NBU\\ReceiptGenerator\\res\\BookStoreOneLogo.png"));
+		lblMainLogo.setIcon(new ImageIcon("res" + File.separator + "BookStoreOneLogo.png"));
 		GridBagConstraints gbc_lblMainLogo = new GridBagConstraints();
 		gbc_lblMainLogo.gridheight = 5;
 		gbc_lblMainLogo.insets = new Insets(0, 0, 5, 0);
@@ -153,7 +155,8 @@ public class MainFrame extends JFrame implements WindowListener {
 	}
 	
 	private void openCashiersFrame() {
-		// TODO not yet implemented
+		CashiersFrame cashiersFrame = new CashiersFrame(this);
+		cashiersFrame.setVisible(true);
 	}
 	
 	private void openServiceFrame() {
@@ -197,6 +200,10 @@ public class MainFrame extends JFrame implements WindowListener {
 			} catch (UnsuccessfullOperationStoreException e1) {
 				JOptionPane.showMessageDialog(this, "Changes are not saved!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
+		
+		if(e.getComponent() instanceof CashiersFrame) {
+			setVisible(true);
 		}
 		
 		
