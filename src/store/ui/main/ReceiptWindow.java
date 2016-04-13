@@ -26,20 +26,23 @@ public class ReceiptWindow extends JFrame {
 	 * Create the frame
 	 */
 	public ReceiptWindow(BookStore bookStore) {
+		setSize(new Dimension(310, 450));
+		setPreferredSize(new Dimension(310, 450));
 	
 		this.bookStore = bookStore;
 		this.bookStore.generateReceipt();
 		
-		setMinimumSize(new Dimension(600, 420));
+		setMinimumSize(new Dimension(400, 320));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		contentPane = new JPanel();
-		contentPane.setMinimumSize(new Dimension(600, 450));
+		contentPane.setPreferredSize(new Dimension(350, 450));
+		contentPane.setMinimumSize(new Dimension(350, 450));
 		setContentPane(contentPane);
 		
 		editorPane = new JTextPane();
-		editorPane.setMinimumSize(new Dimension(600, 350));
-		editorPane.setPreferredSize(new Dimension(600, 350));
+		editorPane.setMinimumSize(new Dimension(300, 350));
+		editorPane.setPreferredSize(new Dimension(300, 350));
 		editorPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		editorPane.setEditable(false);
 		
@@ -55,7 +58,7 @@ public class ReceiptWindow extends JFrame {
 			}
 		});
 		contentPane.add(printButton);
-		
+		pack();
 	}
 	
 	private void writeReceiptToFile() {

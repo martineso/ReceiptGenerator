@@ -7,7 +7,6 @@ public class Cashier {
 	private String cashierID; 
 	private String name;
 	
-	public static final String fieldSeparator = "^";
 	public static final int FIELDS_COUNT = 2;
 	
 	public Cashier(String name, String cashierID) {

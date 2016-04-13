@@ -103,7 +103,7 @@ public class BookStore implements Store {
 
 			try {
 
-				books.get(books.indexOf((Book)product)).decreaseQuantity(quantity);
+				product.decreaseQuantity(quantity);
 
 				SoldProduct productToSell = new SoldProduct(product, quantity);
 				soldBooks.add(productToSell); 
@@ -148,7 +148,7 @@ public class BookStore implements Store {
 
 		} else {
 
-			books.get(books.indexOf((Book)product)).increaseQuantity(product.getQuantity());
+			product.increaseQuantity(product.getQuantity());
 
 		}
 
@@ -156,11 +156,6 @@ public class BookStore implements Store {
 
 	@Override
 	public void addCashier(Cashier cashier) {
-		
-		if(cashiers.isEmpty()) {
-			cashiers.add(cashier);
-			return;
-		}
 		
 		if(!cashiers.contains(cashier)) {
 
@@ -246,10 +241,11 @@ public class BookStore implements Store {
 	@Override
 	public void deleteProduct(String name) throws UnsuccessfullOperationStoreException{
 
+		Product product = getProduct(name);
+		
+		if(product != null) {
 
-		if(getProduct(name) != null) {
-
-			books.remove(getProduct(name));
+			books.remove(product);
 
 		} else {
 

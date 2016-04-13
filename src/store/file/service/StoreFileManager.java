@@ -75,7 +75,7 @@ public class StoreFileManager {
 			while(sc.hasNextLine()) {
 				
 				String line = sc.nextLine();
-				String[] tokens = line.split("[\\" + Cashier.fieldSeparator + "]");
+				String[] tokens = line.split("[\\" + "^" + "]");
 				String cashierName = tokens[0];
 				String cashierID = tokens[1];
 				
@@ -106,7 +106,7 @@ public class StoreFileManager {
 			
 			for(Cashier cashier : cashiers) {
 				
-				String line = cashier.getName() + Cashier.fieldSeparator + cashier.getCashierId();
+				String line = cashier.getName() + "^" + cashier.getCashierId();
 				writer.println(line);
 				
 			}
