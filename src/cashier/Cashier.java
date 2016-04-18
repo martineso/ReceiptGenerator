@@ -4,10 +4,10 @@ import java.util.UUID;
 
 public class Cashier {
 	
+	public static final int FIELDS_COUNT = 2;
+	
 	private String cashierID; 
 	private String name;
-	
-	public static final int FIELDS_COUNT = 2;
 	
 	public Cashier(String name, String cashierID) {
 		

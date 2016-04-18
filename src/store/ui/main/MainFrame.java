@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
@@ -38,6 +39,13 @@ public class MainFrame extends JFrame implements WindowListener {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch(Exception e) {
+					// If Swing cannot set the look and feel which the system uses
+					// it will simply use the "Metal" look and feel
+				}
+				
 				try {
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
